@@ -52,6 +52,6 @@ marp: true
 ---
 # 机器学习的发展历程
 
-![inline](pictures/1.1.jpg)
+![inline 25%](pictures/1.1.jpg)
 
 ---
