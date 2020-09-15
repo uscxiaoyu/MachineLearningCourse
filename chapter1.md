@@ -1,14 +1,26 @@
 ---
 marp: true
-# footer: '**机器学习：第1章-概述**'
+# size: 16:9
+# paginate: true
+headingDivider: 0
+header: '**机器学习：第1章-概述**'
 ---
 <!-- backgroundColor: light -->
 # 《机器学习》课程简介
 ## 教师：肖宇
-## 授课时间：
-## 答疑时间：
-## 助教：
+## 授课时间：星期二56节
+## 答疑时间
+- 星期一78节、
+- 星期二123478节
+- 周一910节
 
+---
+# 学习资源
+1. 李航，《统计学习方法》，2019,第二版
+2. 周志华，《机器学习》，2019
+3. Gavin Hackeling, "Mastering machine learning with scikit-lean", second edition
+4. [PyTorch中文文档](https://pytorch-cn.readthedocs.io/zh/latest/)
+5. [斯坦福机器学习](http://v.163.com/special/opencourse/machinelearning.html)
 
 ---
 # 第1章内容提要
@@ -643,16 +655,3 @@ $$
 回归模型学习最常用的损失函数是平方损失函数，在此情况下回归问题可由最小二乘法求解。
 
 许多领域的任务可以形式化为回归问题：市场趋势预测、产品质量管理、客户满意度调查、投资风险分析等。
-
-
----
-# 学习资源
-1. 李航，《统计学习方法》，第二版
-2. 周志华，《机器学习》
-3. Gavin Hackeling, "Mastering machine learning with scikit-lean", second edition
-4. [PyTorch中文文档](https://pytorch-cn.readthedocs.io/zh/latest/)
-5. [斯坦福机器学习](http://v.163.com/special/opencourse/machinelearning.html)
-6. CMU 机器学习课程
-   - http://www.cs.cmu.edu/~epxing/Class/10715/
-   - http://www.cs.cmu.edu/~epxing/Class/10708/
-   - http://www.cs.cmu.edu/~epxing/Class/10701
