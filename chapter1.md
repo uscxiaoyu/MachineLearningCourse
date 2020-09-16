@@ -15,12 +15,14 @@ header: '**机器学习：第1章-概述**'
 - 周一910节
 
 ---
-# 学习资源
-1. 李航，《统计学习方法》，2019,第二版
-2. 周志华，《机器学习》，2019
-3. Gavin Hackeling, "Mastering machine learning with scikit-lean", second edition
-4. [PyTorch中文文档](https://pytorch-cn.readthedocs.io/zh/latest/)
-5. [斯坦福机器学习](http://v.163.com/special/opencourse/machinelearning.html)
+# Richard Philip Feynman
+>What I cannot create, I do not understand.
+
+# Linus Torvalds
+>Talk is cheap. Show me the code.
+
+---
+![width:750px](pictures/freyman.jpg)
 
 ---
 # 第1章内容提要
@@ -30,7 +32,8 @@ header: '**机器学习：第1章-概述**'
 - 机器学习和统计学
 - 机器学习的分类
 - 机器学习方法三要素
-- 参考资料
+- 机器学习的应用
+- 学习资源
 
 ---
 # 什么是机器学习？
@@ -51,8 +54,6 @@ header: '**机器学习：第1章-概述**'
 - 计算机视觉
 - 自然语言处理
 - 生物特征识别
-- 搜索引擎
-- 医学诊断
 - 检测信用卡欺诈
 - 语音和手写识别
 - 机器人
@@ -68,7 +69,7 @@ header: '**机器学习：第1章-概述**'
 
 ---
 # 机器学习的发展历程
-![width:800px](pictures/1.1.jpg)
+![width:700px](pictures/1.1.jpg)
 
 ---
 # 机器学习的发展历程
@@ -89,10 +90,6 @@ header: '**机器学习：第1章-概述**'
 - 大体上看，数据挖掘可以视为机器学习和数据库的交叉，它主要利用机器学习界提供的技术来分析海量数据，利用数据库界提供的技术来管理海量数据。
 
 ---
-# 机器学习和数据挖掘
-![width: 900px](/pictures/1.3.jpg)
-
----
 # 为什么要研究大数据机器学习？
 ## 例如: “尿布→啤酒”关联规则
 > 实际上，在面对少量数据时关联分析并不难，可以直接使用统计学中有关相关性的知识，这也正是机器学习界没有研究关联分析的一个重要原因。关联分析的困难其实完全是由海量数据造成的，因为数据量的增加会直接造成挖掘效率的下降，当数据量增加到一定程度，问题的难度就会产生质变，例如，在关联分析中必须考虑因数据太大而无法承受多次扫描数据库的开销、可能产生在存储和计算上都无法接受的大量中间结果等。
@@ -100,26 +97,24 @@ header: '**机器学习：第1章-概述**'
 ---
 # 机器学习和统计学
 ## 机器学习
->机器学习(machine learning)致力于研究通过**计算**的手段，利用经验改善系统自身的性能。在计算机系统中，“经验”通常以“数据”形式存在，因此，机器学习所研究的主要内容，是关于在计算机上从数据中产生“模型”（model）的算法，即“学习算法”。如果说计算机科学是研究关于“算法”的学问，那么类似地，可以说机器学习是研究关于“学习算法”的学问。（周志华，《机器学习》，p1）
+>机器学习(machine learning)致力于研究通过**计算**的手段，利用经验改善系统自身的性能。机器学习所研究的主要内容，是关于在计算机上从数据中产生“模型”的算法，即“学习算法”。如果说计算机科学是研究关于“算法”的学问，那么类似地，可以说机器学习是研究关于“学习算法”的学问。(周志华，《机器学习》，p1)
+
 ## 统计学习
 >统计学习(statistical learning)是关于**计算机**基于**数据**构建**概率统计模型**并运用模型对数据进行预测与分析的一门学科。统计学习也称为统计机器学习。(李航，《统计学习方法》，p1)
 
 ---
 # 机器学习和统计学
-
 ## 机器学习
 >强调了通过机器设备（如计算机）进行学习以提升系统，由机器实施“计算”，因此重点在于“算法”。
-
-## 统计学
+## 统计学习
 >强调了通过统计理论与模型（如线性回归）学习以提升系统，重点在于“模型”。
-
 ## 两者是统一的
 >都是为了构建一个可通过经验进行自我提升的系统，“模型”和“算法”都是这个过程中涉及的不同或缺组成部分。
 
 ---
 # 机器学习和统计学
 |machine learning| statistics |
-|---:|---:|
+|:---|:---|
 |instance | data point |
 |feature | covariate|
 |label | response|
@@ -130,19 +125,11 @@ header: '**机器学习：第1章-概述**'
 
 ---
 # 机器学习和统计学
-Simon Blomberg:
->From R’s fortunes package: To paraphrase provocatively, ‘machine learning is statistics minus any checking of models and assumptions’.
-
-Andrew Gelman:
->In that case, maybe we should get rid of checking of models and assumptions more often. Then maybe we’d be able to solve some of the problems that the machine learning people can solve but we can’t!
-
----
-# 机器学习和统计学
 - 研究方法差异
   - 统计学研究形式化和推导
   - 机器学习更容忍一些新方法
 - 维度差异
-  - 统计学强调低维空间问题的统计推导（confidence intervals, hypothesis tests, optimal estimators）
+  - 统计学强调低维空间问题的统计推导
   - 机器学习强调高维预测问题
 - 统计学和机器学习各自更关心的领域：
   - 统计学: survival analysis, spatial analysis, multiple testing, minimax theory, deconvolution,  semiparametric inference, bootstrapping, time series.
@@ -171,13 +158,13 @@ Andrew Gelman:
 # 机器学习的分类
 ## 按模型分类
 - 线性模型与非线性模型
-  - 如果函数$y=f(x)$是线性函数，则称模型为线性模型，否则称模型为非线性模型。
+  - 如果函数$y=f(x)$是线性函数，则称模型为线性模型，否则称为非线性模型。
   - 线性模型：感知机、线性支持向量机、k近邻、k均值、潜在语义分析
   - 非线性模型：核函数支持向量机、AdaBoost、神经网络
 - 参数化模型和非参数化模型
   - 参数化模型假设模型参数的维度不变，模型可由有限维参数完全刻画；非参数化模型参数维度不定或无穷大，随着训练数据量的增加而增大。
   - 参数化模型：感知机、朴素贝叶斯、Logit回归、高斯混合模型
-  - 非参数化模型：决策树、支持向量机、AdaBoost、k近邻、潜在语义分析、概率潜在语义分析、潜在狄利克雷分配
+  - 非参数化模型：决策树、支持向量机、AdaBoost、k近邻、潜在语义分析...
 
 ---
 # 机器学习的分类
@@ -258,15 +245,12 @@ $$
 
 ---
 # 无监督学习
-![width: 900px](/pictures/1.4.jpg)
-
----
-# 无监督学习
 在学习过程中，学习系统从训练数据集学习得到一个最优模型，表示为函数$z=\hat{g}(x)$，条件概率分布$\hat{P}(z|x)$或者条件概率分布$\hat{P}(x|z)$。在预测过程中，预测系统对于给定的输入$x_{N+1}$，由模型$z_{N+1}=\hat{g}(x_{N+1})$或者$z_{N+1}=\text{arg max }\hat{P}(z|x_{N+1})$给出相应的输出$z_{N+1}$，进行聚类或降维；或由模型$\hat{P}(x|z)$给出输入的概率$\hat{P}(x_{N+1}|z_{N+1})$，进行概率估计。
 
 ---
 # 强化学习
-强化学习(reinforcement learning)是指智能系统在于环境的连续互动中学习最优行为策略的机器学习问题。强化学习的本质是学习最优的序贯决策。
+
+强化学习(`reinforcement learning`)是指智能系统在于环境的连续互动中学习最优行为策略的机器学习问题。强化学习的本质是学习最优的序贯决策。
 
 在每一步$t$，智能系统从环境中观测一个状态$s_t$与一个奖励$r_t$，采取一个动作$a_t$。环境根据智能系统的选择的动作，决定$t+1$的$s_{t+1}$和$r_{t+1}$。要学习的策略表示为给定的状态下采取的动作。
 
@@ -274,7 +258,7 @@ $$
 
 ---
 # 强化学习
-强化学习的马儿可夫决策过程是状态、奖励、动作序列上的随机过程，有五元组$<S,A,P,r,\gamma>$组成。
+强化学习的马儿可夫决策过程是状态、奖励、动作序列上的随机过程，有五元组$\mathrm{<S,A,P,r,\gamma>}$组成。
 - $S$是有限状态的集合
 - $A$是有限动作的集合
 - $P$是状态转移概率函数: $P(s'|s,a)=P(s_{t+1}=s'|s_t=s,a_t=a)$
@@ -329,9 +313,7 @@ $$
 $$
 P(\theta|D)=\frac{P(\theta)P(D|\theta)}{P(d)}
 $$
-其中$P(\theta)$是先验概率，$P(D|\theta)$是似然函数。
-
-模型估计时，估计整个后验分布$P(\theta|D)$。如果需要给出一个模型，通常取后验概率最大的模型。预测时，计算数据对后验概率分布的期望值：
+其中$P(\theta)$是先验概率，$P(D|\theta)$是似然函数。模型估计时，估计整个后验分布$P(\theta|D)$。如果需要给出一个模型，通常取后验概率最大的模型。预测时，计算数据对后验概率分布的期望值：
 $$
 P(x|D)=\int P(X|\theta,D)P(\theta|D)d \theta
 $$
@@ -380,6 +362,7 @@ $$
   - 平方损失函数：$L(Y,f(X))=(Y-f(X))^2$
   - 绝对损失函数：$L(Y,f(X))=|Y-f(X)|$
   - 对数损失函数：$L(Y,f(X))=-\mathrm{log}P(Y|X)$
+  - 指数损失函数：$L(Y,f(X))=\mathrm{exp}(-Yf(X))$
 
 ---
 # 机器学习方法三要素: 模型+策略+算法
@@ -397,11 +380,7 @@ R_{exp}(f)&=E_p[L(Y,f(X))] \\
 ---
 # 机器学习方法三要素: 模型+策略+算法
 ## 2. 策略
-给定一个训练集
-$$
-T=\{(x_1,y_1),(x_2,y_2),\mathellipsis,(x_N,y_N)\}
-$$
-模型$f(X)$关于训练数据集的平均损失称为**经验风险(empirical risk)**或者**经验损失(empirical loss)**
+给定一个训练集$T=\{(x_1,y_1),(x_2,y_2),\mathellipsis,(x_N,y_N)\}$，模型$f(X)$关于训练数据集的平均损失称为**经验风险(empirical risk)**或者**经验损失(empirical loss)**
 $$
 R_{emp}(f)=\frac{1}{N}\sum_{i=1}{N}L(y_i,f(x_i))
 $$
@@ -414,8 +393,8 @@ $$
 $$
 \mathrm{\min_{f\in F}}\frac{1}{N}\sum_{i=1}^N L(y_i,f(x_i))
 $$
-- 结构风险最小化
-> 结构风险最小化是为了防止过拟合(over-fitting)提出的策略，等价于正则化(regularization)。
+- 结构风险最小
+>为了防止过拟合(over-fitting)提出的策略，等价于正则化(regularization)。
 $$
 \mathrm{\min_{f\in F}} R_{srm}(f)=\frac{1}{N}\sum_{i=1}^N L(y_i,f(x_i))+\lambda J(f)
 $$
@@ -469,13 +448,8 @@ $$
 ![width: 500px](./pictures/1.5.svg)
 
 ---
-# 模型评估和模型选择
-## 2. 过拟合与模型选择
-
-
----
 # 正则化与交叉验证
-## 1. 正则化(regularization)
+## 1. 正则化(`regularization`)
 模型选择的典型方法是**正则化**，正则化一般具有如下形式：
 $$
 \min_{f\in F}\frac{1}{N}\sum_{i=1}^N L(y_i,\hat{f}(x_i)) + \lambda J(f)
@@ -487,26 +461,26 @@ $$
 
 ---
 # 正则化与交叉验证
-## 1. 正则化(regularization)
+## 1. 正则化(`regularization`)
 正则化项也可以是$L_1$范数
 $$
 L_1(\omega)=\frac{1}{N}\sum_{i=1}^N (f(x_i;\omega)-y_i)^2 + \lambda ||\omega||_1
 $$
 
-**奥卡姆剃刀(Occam's razor)原理**应用于模型选择时变成以下想法：在所有可能选择的模型中，能够很好地解释已知数据并且十分简单才是最好的模型，也就是应该选择的模型。
+**奥卡姆剃刀(`Occam's razor`)原理**应用于模型选择时变成以下想法：在所有可能选择的模型中，能够很好地解释已知数据并且十分简单才是最好的模型，也就是应该选择的模型。
 
 从**贝叶斯估计**的角度来看，正则化项对应于模型的先验概率，可以加速复杂的模型有较小的先验概率，简单的模型有较大的先验概率。
 
 ---
 # 正则化与交叉验证
-## 2. 交叉验证(cross validation)
+## 2. 交叉验证(`cross validation`)
 如果给定的样本数据充足，进行模型选择的一种简单方法是随机地将数据集切成三部分：**训练集(training set)、验证集(validation set)和测试集(test set)**。在学习到不同复杂度的模型中，选择对验证集有最小预测误差的模型。
 
 在实际应用中，由于数据是不充足的，为了选择好的模型，可以采用交叉验证方法，其基本思想是重复地使用数据，把给定的数据进行切分，将切分的数据集组合为训练集和测试集，在此基础上反复地进行训练、测试及模型选择。
 
 ---
 # 正则化与交叉验证
-## 2. 交叉验证(cross validation)
+## 2. 交叉验证(`cross validation`)
 交叉验证一般包含以下三种类型
 - 简单交叉验证
 - **S折交叉验证**
@@ -515,7 +489,7 @@ $$
 
 ---
 # 泛化能力
-## 1. 泛化误差(generalization error)
+## 1. 泛化误差(`generalization error`)
 学习方法的泛化能力是指由该方法学习到的模型对未知数据的预测能力，是学习方法本质上的重要性质。现实中采用最多的方法是通过测试误差来评价学习方法的泛化能力。但是该评价方法依赖于测试数据集，因此评价结果是不可靠的。以下从理论上对学习方法的泛化能力进行分析。
 
 如果学习到的模型是$\hat{f}$，那么这个模型对未知数据预测的误差即为泛化误差(generalization error)
@@ -529,14 +503,14 @@ $$
 
 ---
 # 泛化能力
-## 2. 泛化误差上界(generalization error bound)
+## 2. 泛化误差上界(`generalization error bound`)
 学习方法的泛化能力分析往往是通过研究泛化误差的概率上界进行的，简称**泛化误差上界(generalization error bound)**。泛化误差上界具有以下性质：它是样本容量的函数，当样本容量增加时，泛化上界趋于0；它是假设空间容量的函数，假设空间容量越大，模型就越难学，泛化误差上界就越大。
 
 下面给出一个简单的泛化误差上界的例子：二分类问题的泛化误差上界。考虑二分类问题，给定训练集$T=\{(x_1,y_1),(x_2,y_2),\mathellipsis,(x_N,y_N)\}$，其中$x_i\in \mathrm{R}$是$y$的观测值，$i=1,2,\mathellipsis,N$，N是样本容量，T是从联合概率分布$P(X,Y)$独立同分布产生的，$X\in \mathbb{R^n},Y\in\{-1,+1\}$。假设空间是函数的有限集合$F=\{f_1,f_2,\mathellipsis,f_d\}$，d是函数个数。设$f$是从$F$中选取的函数。损失函数是$0-1$损失。
 
 ---
 # 泛化能力
-## 2. 泛化误差上界(generalization error bound)
+## 2. 泛化误差上界(`generalization error bound`)
 关于$f$的期望分先和经验风险分别是
 $$
 R(f)=E[L(Y,f(X))]\\
@@ -550,7 +524,7 @@ $f_N$依赖训练集的样本容量N。人们更关心的是$f_N$的泛化误差
 
 ---
 # 泛化能力
-## 2. 泛化误差上界(generalization error bound)
+## 2. 泛化误差上界(`generalization error bound`)
 下面讨论从有限集合$F=\{f_1,f_2,\mathellipsis,f_d\}$中任意选出的函数f的泛化误差上界。
 >定理1.1 （泛化误差上界） 对于二分类问题，当假设空间是有限个函数的集合$F=\{f_1,f_2,\mathellipsis,f_d\}$时，对任意一个函数$f\in F$，至少以概率$1-\delta, 0<\delta<1$，以下不等式成立
 >$$
@@ -655,3 +629,11 @@ $$
 回归模型学习最常用的损失函数是平方损失函数，在此情况下回归问题可由最小二乘法求解。
 
 许多领域的任务可以形式化为回归问题：市场趋势预测、产品质量管理、客户满意度调查、投资风险分析等。
+
+---
+# 学习资源
+1. 李航，《统计学习方法》，2019,第二版
+2. 周志华，《机器学习》，2019
+3. Gavin Hackeling, "Mastering machine learning with scikit-lean", second edition
+4. [PyTorch中文文档](https://pytorch-cn.readthedocs.io/zh/latest/)
+5. [斯坦福机器学习](http://v.163.com/special/opencourse/machinelearning.html)
