@@ -52,6 +52,7 @@ $$
 import numpy as np
 import pandas as pd
 import torch
+import matplotlib.pyplot as plt
 
 # 定义感知机函数
 def percetron(w, X, b):
@@ -95,7 +96,7 @@ $$
 
 ---
 # 感知机学习策略
-- 假定S的误分类集合为M，则素有误分类点到超平面的距离总和为
+- 假定S的误分类集合为M，则所有误分类点到超平面的距离总和为
 $$
 \mathrm{Dist(M,S)}=-\frac{1}{\|\omega\|}\sum_{x_i\in M}y_i(\omega\cdot x_i+b)
 $$
@@ -104,7 +105,6 @@ $$
 L(\omega,b)=-\sum_{x_i\in M}y_i(\omega\cdot x_i+b)
 $$
 - 显然，以上损失函数是非负的，如果没有误分类点，则损失函数为0。
-
 
 ---
 ```python
@@ -132,6 +132,44 @@ $$
 - 假设误分类集合$M$是固定的，那么损失函数$L(\omega, b)$的梯度由$\bigtriangledown_{\omega}=-\sum_{x_i\in M}y_ix_i,\bigtriangledown_{b}=-\sum_{x_i\in M}y_i$给出。
 - 随机选取一个误分类点$(x_i,y_i)\in M$，对$\omega, b$进行更新：$\omega := \omega + \eta y_i x_i,b := b + \eta y_i$，其中$0<\eta\leq 1$是步长，也称为学习率。
 - 通过迭代可以减少损失函数$L(\omega, b)$的值，直到$L$为0.
+
+---
+# 梯度下降
+考虑$\mathbf{x} \in \mathbb{R}^d$, 其中$\mathbf{x}$为向量, 目标函数$f: \mathbb{R}^d \to \mathbb{R}$映射至标量。对应的$f$关于$\mathbf{x}$每一维度$x_i$的偏导构成梯度
+
+$$\nabla f(\mathbf{x}) = \bigg[\frac{\partial f(\mathbf{x})}{\partial x_1}, \frac{\partial f(\mathbf{x})}{\partial x_2}, \ldots, \frac{\partial f(\mathbf{x})}{\partial x_d}\bigg]^\top.$$
+
+利用泰勒展开式可得：$f(\mathbf{x} + \mathbf{\epsilon}) = f(\mathbf{x}) + \Delta\mathbf{x}^\top \nabla f(\mathbf{x}) + O(|\mathbf{\Delta x}|^2).$
+
+换而言之，最速下降方向由$-\nabla f(\mathbf{x})$给出。令$\Delta \mathbf{x}=-\eta \nabla f(\mathbf{x})$，则有
+
+$$f(\mathbf{x} + \Delta \mathbf{x}) = f(\mathbf{x}) - \eta \nabla f(\mathbf{x})^T \nabla f(\mathbf{x}) + O(|\mathbf{\epsilon}|^2).$$
+
+选定合适的学习率$\eta > 0$，则可得梯度下降更新公式
+$$\mathbf{x} \leftarrow \mathbf{x} - \eta \nabla f(\mathbf{x}).$$
+
+---
+```python
+def grad_desc(f, grad_f, x0, learn_rate=0.05):
+    '''
+    f: 待优化目标函数, grad_f: f的梯度, x0: 参数初值, learn_rate: 学习率
+    '''
+    trace_x = np.array([x0])  # x的历史记录
+    x = x0
+    i = 0
+    while True:
+        x -= learn_rate * grad_f(x)  # 更新x的值
+        trace_x = np.concatenate([trace_x, x.reshape(1, -1)])
+        i += 1
+        if i % 5 == 0:
+            print(f'迭代次数: {i}, 目标函数值f: {f(x):.6f}')
+
+        if np.sum(np.abs(x)) < 1e-3:  # 停止条件
+            break
+
+    print(f'共迭代{len(trace_x)}次, 目标函数: {f(x)}, 最优参数值: {x.tolist()}')
+    return trace_x
+```
 
 ---
 # 算法2.1  感知机学习算法的原始形式
@@ -206,7 +244,7 @@ def learn_model(lossfunc, X, y, epochs=50, lr=0.03):
 
 ---
 # 算法收敛性
-**定理2.1 (Novikoff)** 设训练集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$是线性可分的，其中$x_i\in\chi=\mathbb{R^n}, y_i\in\mathbf{Y}=\{-1,+1\}, i=1,2,...,N$，则
+**定理2.1 (`Novikoff`)** 设训练集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$是线性可分的，其中$x_i\in\chi=\mathbb{R^n}, y_i\in\mathbf{Y}=\{-1,+1\}, i=1,2,...,N$，则
 - 存在满足条件$||\hat{\omega}_{opt}||=1$的超平面$\hat{\omega}_{opt}\cdot \hat{x}+b_{opt}=0$将训练集完全正确分开；且存在$\gamma > 0$，对于所有的$i=1,2,...,N$有 $y_i(\hat{\omega}_{opt}\cdot x_i+b_{opt})\geq \gamma$
 - 令$R= \max_{\leq i \leq N}||\hat{x_i}||$，则感知机算法2.1在训练集上的误分类次数k满足不等式
 $$
@@ -218,15 +256,15 @@ $$
 ---
 # 感知机学习算法的对偶形式
 
-对偶形式的基本想法是，将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。假定初始值$\omega_0,b_0$均为0，对误分类点$(x_i,y_i)$通过
+- 对偶形式的基本想法是，将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。假定初始值$\omega_0,b_0$均为0，对误分类点$(x_i,y_i)$通过
 $$
 \omega:=\omega+\eta y_i x_i, b:=b+\eta y_i
 $$
-逐步修改$\omega, b$，经过n次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$,最后学习到的$\omega, b$可以分别表示为
+- 逐步修改$\omega, b$，经过n次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$,最后学习到的$\omega, b$可以分别表示为
 $$
 \omega=\sum_{i=1}^N\alpha_iy_ix_i, b=\sum_{i=1}^N\alpha_iy_i
 $$
-实例点更新次数越多，意味着它距离分离超平面越近，也就越难正确分类，即这样的实例对学习结果影响最大。
+- 实例点更新次数越多，意味着它距离分离超平面越近，也就越难正确分类，即这样的实例对学习结果影响最大。
 
 ---
 # 感知机学习算法的对偶形式

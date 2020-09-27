@@ -676,7 +676,7 @@ $$
 
 ---
 # 学习资源
-1. 李航，《统计学习方法》，2019,第二版
+1. 李航，《统计学习方法》，2019，第二版
 2. 周志华，《机器学习》，2017
 3. Gavin Hackeling, "Mastering machine learning with scikit-learn", second edition
 4. [PyTorch中文文档](https://pytorch-cn.readthedocs.io/zh/latest/)
