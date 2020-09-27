@@ -181,7 +181,7 @@ class DecisionTreeClassifier:
                 c_subtree = self.select_nodes(node, tree)
                 if c_subtree:  # 如果不为空
                     parent_node, succe_nodes = c_subtree
-                    c_subtrees.apppend([parent_node, succe_nodes])
+                    c_subtrees.append([parent_node, succe_nodes])
                     candidate_nodes.extend([parent_node, *succe_nodes])
 
         while c_subtrees:  # 无待评估子树时停止迭代
