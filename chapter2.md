@@ -6,14 +6,15 @@ headingDivider: 0
 header: '**第2章 感知机**'
 ---
 <!-- fit -->
-# 第二章 感知机
+# 第2章 感知机
 
 ---
 # 主要内容
 - 问题
-- 模型
+- 感知机模型
 - 策略
-- 算法
+- 寻优算法的原始形式
+- 寻优算法的对偶形式
 - 算法实现
 
 
@@ -158,13 +159,13 @@ def grad_desc(f, grad_f, x0, learn_rate=0.05):
     x = x0
     i = 0
     while True:
-        x -= learn_rate * grad_f(x)  # 更新x的值
+        x = x - learn_rate * grad_f(x)  # 更新x的值
         trace_x = np.concatenate([trace_x, x.reshape(1, -1)])
         i += 1
         if i % 5 == 0:
             print(f'迭代次数: {i}, 目标函数值f: {f(x):.6f}')
 
-        if np.sum(np.abs(x)) < 1e-3:  # 停止条件
+        if np.sum(np.abs(trace_x[-1] - trace_x[-2])) < 1e-3:  # 停止条件
             break
 
     print(f'共迭代{len(trace_x)}次, 目标函数: {f(x)}, 最优参数值: {x.tolist()}')
@@ -274,18 +275,18 @@ $$
 \begin{aligned}
 \mathbf{\hat{\omega}} &=  (\omega_1, \omega_2, ..., \omega_n, b) \\
 &= (\sum_{i=1}^N \alpha_i y_i x_i^1, \sum_{i=1}^N \alpha_i y_i x_2^2, ..., \sum_{i=1}^N \alpha_i y_i x_i^n, \sum_{i=1}^N \alpha_i y_i) \\
-&= (\alpha_{1\times N} \cdot y_{1\times N}^T) \hat{X}_{N\times (n+1)}
+&= (\alpha_{1\times N} \otimes y_{1\times N}^T) \hat{X}_{N\times (n+1)}
 \end{aligned}
 $$
 其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的更新累积量。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f(x_i) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^1, x_i^2, ..., x_i^n, 1)$。
-- 可以先计算$\mathbf{A} = \hat{X} \hat{X}^T$，迭代更新遇到误分类点$x_i$时，直接取对应的列$A_{.,i}$，即计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
+- 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，迭代更新遇到误分类点$x_i$时，直接取对应的列$A_{.,i}$，即计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
 
 ---
 # 算法2.2 （感知机学习算法的对偶形式）
 - 输入：训练数据集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$，其中$x_i\in \mathbf{X=R^n}, y_i\in Y=\{-1, +1\}, i=1,2,...,N$; 学习率$\eta(0<\eta\leq 1)$；
 - 输出：$\mathbf{\alpha},b$，其中$\mathbf{\alpha}=(\alpha_1,\alpha_2,...,\alpha_N)^T$为各数据点更新的次数; 感知机模型$f(x)=\mathrm{sign}(\sum_{j=1}^N \alpha_jy_j\cdot \mathbf{x} +b)$
 - 算法过程：
-  - (1) $\alpha := (0, 0, ..., 0)^T, b:= 0$;
+  - (1) 更新$\alpha := (0, 0, ..., 0)^T, b:= 0$;
   - (2) 根据$y_i\left(\sum_{j=1}^N\alpha_j y_j x_j\cdot x_i+b\right)\leq 0$随机选取一个误分类数据$(x_i,y_i)$;
   - (3) 执行更新$\alpha_i:=\alpha_i+\eta,b:=b+\eta y_i$;
   - (4) 转至(2)直到没有误分类点
