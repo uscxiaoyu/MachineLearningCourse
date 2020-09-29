@@ -19,19 +19,13 @@ header: '**第2章 感知机**'
 
 
 ---
-# 问题
-
-![width:1000px](pictures/2.1.svg)
-
-
----
 # 概述
 - 1957年由Rosenblatt提出，是**神经网络**与**支持向量机**的基础。
 - 输入为实例的特征向量，输出为实例的类别，正例取+1，反例取-1；
 - 感知机对应于输入空间中将实例划分为正负两类的分离超平面，属于判别模型；
 - 导入基于误分类的损失函数；
 - 利用梯度下降法对损失函数进行极小化；
-- 感知机学习算法具有简单而易于实现的优点，分为原始形式和对偶形式； 
+- 感知机学习算法具有简单而易于实现的优点，分为原始形式和对偶形式；
 
 ---
 # 模型
@@ -79,6 +73,11 @@ $$
 \omega\cdot x + b=0
 $$
 能够将数据集的正实例点和负实例点完全正确地划分到超平面的两侧，即对所有的$y_i=+1$的实例i，有$\omega\cdot x_i+b>0$，对所有的$y_i=-1$的实例i，有$\omega\cdot x_i+b<0$，则称数据集$T$为线性可分数据集；否则，称之为线性不可分。
+
+---
+# 数据集的线性可分性
+
+![width:1000px](pictures/2.1.svg)
 
 ---
 # 感知机学习策略
@@ -135,7 +134,7 @@ $$
 - 通过迭代可以减少损失函数$L(\omega, b)$的值，直到$L$为0.
 
 ---
-# 梯度下降
+# *梯度下降*
 考虑$\mathbf{x} \in \mathbb{R}^d$, 其中$\mathbf{x}$为向量, 目标函数$f: \mathbb{R}^d \to \mathbb{R}$映射至标量。对应的$f$关于$\mathbf{x}$每一维度$x_i$的偏导构成梯度
 
 $$\nabla f(\mathbf{x}) = \bigg[\frac{\partial f(\mathbf{x})}{\partial x_1}, \frac{\partial f(\mathbf{x})}{\partial x_2}, \ldots, \frac{\partial f(\mathbf{x})}{\partial x_d}\bigg]^\top.$$
@@ -185,7 +184,7 @@ def grad_desc(f, grad_f, x0, learn_rate=0.05):
 
 ---
 ```python
-# 随机梯度下降学习过程
+# 随机梯度下降学习过程，基于numpy实现
 def learning_perceptron_sgd(X, y, epochs=100, lr=0.03):
     '''
     X: 特征矩阵
@@ -232,7 +231,7 @@ def learn_model(lossfunc, X, y, epochs=50, lr=0.03):
         b.data.sub_(lr*b.grad)
         b.grad.data.zero_()
         with torch.no_grad():  # 不计算梯度，加速损失函数的运算
-            d_w, d_b = w.detach(), b.detach()
+            d_w, d_b = w.detach(), b.detach()   #  从计算图中解绑，后面的操作不影响计算图中对应的结果
             train_l = loss(d_w, d_b, X, y)  # 最近一次的负对数似然率
             if epoch % 5 == 0:
                 print(f'epoch {epoch}, loss: {train_l.numpy():.4f}')
