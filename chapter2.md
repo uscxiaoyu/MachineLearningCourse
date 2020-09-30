@@ -307,7 +307,7 @@ def learning_perceptron_dual_sgd(X, y, epochs=100, lr=0.03):
     for epoch in range(epochs):
         np.random.shuffle(s_idx)  # 随机打乱s_idx
         for i in s_idx:
-            if (alpha * train_y @ gram[i] + b) * y[i] <= 0: # 选择第一个分错的点更新
+            if (alpha * y @ gram[i] + b) * y[i] <= 0: # 选择第一个分错的点更新
                 alpha[i] = alpha[i] + lr
                 b = b + lr * y[i]
                 break  # 更新一个误分类点后跳出循环，进行下一轮
