@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.animation as animation
+import torch
 
 
 def grad_desc(f, grad_f, x0, learn_rate=0.05):
@@ -87,13 +89,49 @@ if __name__ == "__main__":
     # res = grad_desc(f, grad_f, x0=np.array([3, 3]), learn_rate=0.2)
     res = grad_desc_with_momentum(f, grad_f, x0=np.array([3, 3]), beta=0.5, learn_rate=0.2)
     # res = adaptive_momentum(f, grad_f, x0=np.array([3, 3]), beta1=0.5, beta2=0.5, learn_rate=0.2)
-    x0, x1 = res[:, 0], res[:, 1]
-    plt.figure(figsize=(10, 6))
-    plt.plot(x0, x1, "-o", color="#ff7f0e")
+
+    # 绘制动画
+    a0, a1 = res[:, 0].tolist(), res[:, 1].tolist()
+    fig = plt.figure(figsize=(10, 6))
+    ax = fig.add_subplot(1, 1, 1)
+    line, = ax.plot([], [], "-o", lw=0.5, color="orange")
+    ax.grid(False)
+    xdata, ydata = [], []
     x0 = np.arange(-5.5, 5.0, 0.1)
-    x1 = np.arange(min(-3.0, min(x1) - 1), max(1.0, max(x1) + 1), 0.1)
+    x1 = np.arange(min(-3.0, min(a0) - 1), max(1.0, max(a1) + 1), 0.1)
     x0, x1 = np.meshgrid(x0, x1)
-    plt.contour(x0, x1, f([x0, x1]), colors="#1f77b4")
-    plt.xlabel("x0")
-    plt.ylabel("x1")
+    ax.contour(x0, x1, f([x0, x1]), colors="grey", linewidths=1, alpha=0.2, linestyles="solid")
+    ax.set_xlabel("$x_0$")
+    ax.set_ylabel("$x_1$")
+
+    def data_gen():
+        for u, v in zip(a0, a1):
+            yield u, v
+
+    def init():
+        xdata, ydata = [], []
+        line.set_data(xdata, ydata)
+        return line,
+
+    def run(data):
+        u, v = data
+        print(u, v)
+        xdata.append(u)
+        ydata.append(v)
+        line.set_data(xdata, ydata)
+        return line,
+
+    ani = animation.FuncAnimation(fig, run, data_gen, interval=1000, init_func=init, repeat=False)
     plt.show()
+
+    # 静图
+    # plt.figure(figsize=(10, 6))
+    # plt.plot(x0, x1, "-o", color="#ff7f0e")
+    # x0 = np.arange(-5.5, 5.0, 0.1)
+    # x1 = np.arange(min(-3.0, min(x1) - 1), max(1.0, max(x1) + 1), 0.1)
+    # x0, x1 = np.meshgrid(x0, x1)
+    # plt.contour(x0, x1, f([x0, x1]), colors="#1f77b4", linewidths=1, linestyles="dashed")
+    # plt.xlabel("x0")
+    # plt.ylabel("x1")
+    # plt.show()
+
