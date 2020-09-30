@@ -318,3 +318,5 @@ def learning_perceptron_dual_sgd(X, y, epochs=100, lr=0.03):
     w = train_y * alpha @ train_x  # 对应的w
     return w, b, alpha
 ```
+
+# 感知机应用
