@@ -1,9 +1,10 @@
+from torch.utils.data import TensorDataset, DataLoader
 import numpy as np
 import torch
 import matplotlib.pyplot as plt
 
 
-def learn_params(lossfunc, X, y, epochs=50, lr=0.03):
+def gradient_descendent(lossfunc, X, y, epochs=50, lr=0.03):
     '''
     lossfunc: 损失函数
     X: 特征矩阵
@@ -23,6 +24,23 @@ def learn_params(lossfunc, X, y, epochs=50, lr=0.03):
             if epoch % 5 == 0:
                 print(f'epoch {epoch}, loss: {train_loss.numpy():.4f}')
     return params
+
+
+def mini_batch_sgd(lossfunc, X, y, batch_size=10, epochs=10, lr=0.03):
+    dataset = TensorDataset(X, y)
+    data_iter = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
+    beta = torch.randn(size=(X.shape[1] + 1, 1), requires_grad=True)  # 初始参数 (d+1)*1
+    for epoch in range(epochs):
+        for t_X, t_y in data_iter:
+            l = lossfunc(t_X, t_y, beta)   
+            l.backward()  # 计算损失函数在 [w,b] 上的梯度
+            beta.data.sub_(lr*beta.grad/batch_size)
+            beta.grad.data.zero_()
+
+        with torch.no_grad():  # 不计算梯度，加速损失函数的运算
+            train_l = lossfunc(X, y, beta)  # 最近一次的负对数似然率
+            est_beta = [u[0] for u in beta.detach().numpy()]  # detach得到一个有着和原tensor相同数据的tensor
+            print(f'epoch {epoch + 1}, loss: {train_l.numpy()[0][0]:.4f}')
 
 
 if __name__ == "__main__":
@@ -54,7 +72,7 @@ if __name__ == "__main__":
     x_list = [train_x, test_x]
     y_list = [train_y, test_y]
 
-    params = learn_params(loss, train_x, train_y, epochs=20)
+    params = gradient_descendent(loss, train_x, train_y, epochs=20)
 
     d_params = params.data.numpy()
     w0, w1, b = d_params.reshape(1, -1)[0]
