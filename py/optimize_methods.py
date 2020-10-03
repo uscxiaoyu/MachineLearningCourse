@@ -94,7 +94,7 @@ if __name__ == "__main__":
     a0, a1 = res[:, 0].tolist(), res[:, 1].tolist()
     fig = plt.figure(figsize=(10, 6))
     ax = fig.add_subplot(1, 1, 1)
-    line, = ax.plot([], [], "-o", lw=0.5, color="orange")
+    (line,) = ax.plot([], [], "-o", lw=0.5, color="orange")
     ax.grid(False)
     xdata, ydata = [], []
     x0 = np.arange(-5.5, 5.0, 0.1)
@@ -111,7 +111,7 @@ if __name__ == "__main__":
     def init():
         xdata, ydata = [], []
         line.set_data(xdata, ydata)
-        return line,
+        return (line,)
 
     def run(data):
         u, v = data
@@ -119,7 +119,7 @@ if __name__ == "__main__":
         xdata.append(u)
         ydata.append(v)
         line.set_data(xdata, ydata)
-        return line,
+        return (line,)
 
     ani = animation.FuncAnimation(fig, run, data_gen, interval=1000, init_func=init, repeat=False)
     plt.show()
@@ -134,4 +134,3 @@ if __name__ == "__main__":
     # plt.xlabel("x0")
     # plt.ylabel("x1")
     # plt.show()
-
