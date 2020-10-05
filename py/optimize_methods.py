@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import matplotlib.animation as animation
-import torch
+import numpy as np
 
 
 def grad_desc(f, grad_f, x0, learn_rate=0.05):
