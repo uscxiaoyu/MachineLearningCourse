@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="248 235 214 189" width="214" height="189">
+  <defs/>
+  <metadata> Produced by OmniGraffle 7.12.1 
+    <dc:date>2020-10-09 00:59:18 +0000</dc:date>
+  </metadata>
+  <g id="Canvas_1" stroke-opacity="1" fill="none" stroke="none" stroke-dasharray="none" fill-opacity="1">
+    <title>Canvas 1</title>
+    <rect fill="white" x="248" y="235" width="214" height="189"/>
+    <g id="Canvas_1: Layer 1">
+      <title>Layer 1</title>
+      <g id="Graphic_15">
+        <ellipse cx="352" cy="344.25" rx="60.5000966730648" ry="52.0000830908986" fill="white"/>
+        <ellipse cx="352" cy="344.25" rx="60.5000966730648" ry="52.0000830908986" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_2">
+        <rect x="446.5" y="346" width="15" height="16.5" fill="#ccc"/>
+        <rect x="446.5" y="346" width="15" height="16.5" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_3">
+        <path d="M 316 236 L 323.5 252.5 L 331 236 Z" fill="red"/>
+        <path d="M 316 236 L 323.5 252.5 L 331 236 Z" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_4">
+        <ellipse cx="366.5" cy="344.25" rx="7.50001198426424" ry="8.25001318269061" fill="lime"/>
+        <ellipse cx="366.5" cy="344.25" rx="7.50001198426424" ry="8.25001318269061" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_5">
+        <rect x="248.5" y="319.5" width="15" height="16.5" fill="#ccc"/>
+        <rect x="248.5" y="319.5" width="15" height="16.5" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_6">
+        <rect x="286.5" y="406.5" width="15" height="16.5" fill="#ccc"/>
+        <rect x="286.5" y="406.5" width="15" height="16.5" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_7">
+        <rect x="435.5" y="271.5" width="15" height="16.5" fill="#ccc"/>
+        <rect x="435.5" y="271.5" width="15" height="16.5" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_8">
+        <rect x="316" y="346" width="15" height="16.5" fill="#ccc"/>
+        <rect x="316" y="346" width="15" height="16.5" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_11">
+        <path d="M 383.5 243.5 L 391 260 L 398.5 243.5 Z" fill="red"/>
+        <path d="M 383.5 243.5 L 391 260 L 398.5 243.5 Z" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_12">
+        <path d="M 338 309.5 L 345.5 326 L 353 309.5 Z" fill="red"/>
+        <path d="M 338 309.5 L 345.5 326 L 353 309.5 Z" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_13">
+        <path d="M 277.5 271.5 L 285 288 L 292.5 271.5 Z" fill="red"/>
+        <path d="M 277.5 271.5 L 285 288 L 292.5 271.5 Z" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+      <g id="Graphic_14">
+        <path d="M 363.5 367 L 371 383.5 L 378.5 367 Z" fill="red"/>
+        <path d="M 363.5 367 L 371 383.5 L 378.5 367 Z" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="1"/>
+      </g>
+    </g>
+  </g>
+</svg>
