@@ -3,10 +3,10 @@ marp: true
 # size: 4:3
 paginate: true
 headingDivider: 0
-header: '**第3章 k-近邻回归**'
+header: '**第3章 k-近邻法**'
 ---
 <!-- fit -->
-# 第3章 k-近邻回归
+# 第3章 k-近邻法
 
 ---
 # 主要内容
@@ -98,7 +98,7 @@ manhattan_dist = lambda x: distance(x[0], x[1], p=2)
 - 方法1：逐一计算待预测实例与训练数据集之间的特征距离，然后取距离最近的k近邻，在此基础上预测
 
 ```python
-def line_search_knn(x, X, k):
+def brute_force_knn(x, X, k):
     dist_list = []
     for i in range(len(X)):
         dist_list.append([distance(X[i], x), i])
@@ -106,8 +106,9 @@ def line_search_knn(x, X, k):
     top_k = sorted(dist_list)[:k]
     return top_k
 ```
+> 缺点?
 
-- 方法2：通过利用基于训练集构建的`kd`树，快速确定待预测实例的k个最近邻，在此基础上预测
+- 方法2：基于训练集构建一定的存储结构(如`kd tree`和`ball tree`)，然后快速确定待预测实例的k个最近邻，在此基础上进行预测
 
 
 ---
@@ -167,7 +168,7 @@ def line_search_knn(x, X, k):
 # 3. `kd`树：如何表示树结构？
 
 - 方法1：基于字典
-- 方法2：自己构建class
+- 方法2：构建tree类
 - 方法3：基于`networkx`的[DiGraph](https://networkx.github.io/documentation/stable/reference/classes/digraph.html#networkx.DiGraph)类
 
 ---
@@ -333,6 +334,10 @@ def generate_kd_tree(X, y):
 
 ```
 
+---
+# 课堂练习1
+
+以上算法实现实践了《统计学习方法》一书中的特征维度选择办法。另一种特征维度选择办法为：计算当前节点数据集每一个特征维度的方差，选择方差最大的维度作为当前节点继续划分的维度。请完成基于该特征选择方法的`kd`树生成算法。
 
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
@@ -464,6 +469,7 @@ $$
 ---
 # 5. `kd`树: 决策规则
 
+## 5.1 分类
 - 对于给定的实例$x\in \chi$，其最近邻的k个训练实例点构成集合$N_k(x)$。如果涵盖$N_k(x)$的区域的类别是$c_j$，那么误分类率是
 $$
 \frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i\neq c_j)=1-\frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i=c_j)
@@ -472,6 +478,8 @@ $$
 
 ---
 # 5. `kd`树: 决策规则
+## 5.1 分类
+
 - 实现
 ```python
 def majority_vote(x, k_list, kd_tree):
@@ -486,12 +494,31 @@ def majority_vote(x, k_list, kd_tree):
 ```
 
 ---
-# `kd`树的缺陷
-- KD 树的方法对于低维度近邻搜索非常快, 当D增长到很大时, 效率变低，因为需要构建一个非常深的树，并且每次回溯都要回溯非常多的节点。
+# 5. `kd`树: 决策规则
+## 5.2 回归
+
+取`k`近邻对应y的平均值为输入实例的预测值
+$$
+\hat{y} = \frac{1}{k}\sum_{x_i\in N_k(x)}y_i
+$$
+
+---
+# 5. `kd`树: 决策规则
+## 5.2 回归
+
+```python
+def average_k_nn(x, k_list, kd_tree):
+    y_list = []
+    for _, node in k_list:
+        y = kd_tree.nodes[node]['point'][1]
+        y_list.append(y)
+
+    return sum(y_list) / len(y_list)
+```
 
 ---
 # 作业
 
 除以`kd`树存储训练实例外，`knn`也可采用`Ball tree`存储训练实例。请参照`kd`树的实现，基于`python`实现`Ball tree`的生成算法和搜索算法。
 
-> 将所有样本放到一个超球体里，找到其中一个样本作为球心`x0`，使得所有其它样本到它的最大距离最短。然后，找到一个离 `x0`最远的点`x1`，再找到离`x1`最远的点为`x2`，然后把球体内所有样本分按照离`x1`最近分配给`x1`，离`x2`最近就分配到`x2`，然后构建两个子球体，再重新调整两个球的球心。递归下去，直到只包含一个样本，就不再切割。
+> 将所有样本放到一个超球体里，找到其中一个样本作为球心`x0`，使得所有其它样本到它的最大距离最短。然后，找到一个离 `x0`最远的点`x1`，再找到离`x1`最远的点为`x2`，把球体内所有样本分按就近原则分别分配给`x1`或`x2`，重新调整两个球的球心，在此基础上构建两个子球体。递归下去，直到球中只包含一个样本，就不再切割。
