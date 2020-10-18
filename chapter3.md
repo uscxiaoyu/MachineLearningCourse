@@ -3,7 +3,7 @@ marp: true
 # size: 4:3
 paginate: true
 headingDivider: 0
-header: '**第3章 k-近邻法**'
+# header: '**第3章 k-近邻法**'
 ---
 <!-- fit -->
 # 第3章 k-近邻法
@@ -469,7 +469,6 @@ $$
 ---
 # 5. `kd`树: 决策规则
 
-## 5.1 分类
 - 对于给定的实例$x\in \chi$，其最近邻的k个训练实例点构成集合$N_k(x)$。如果涵盖$N_k(x)$的区域的类别是$c_j$，那么误分类率是
 $$
 \frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i\neq c_j)=1-\frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i=c_j)
@@ -478,43 +477,84 @@ $$
 
 ---
 # 5. `kd`树: 决策规则
-## 5.1 分类
-
-- 实现
+![bg right:40% fit](./pictures/3.3.svg)
+- 近邻影响的加权。 在得到距离`x`的k个最近邻后，可以根据最近邻与`x`之间的距离进行加权。由于权重与距离呈反比，因此根据一定规则由距离计算出各邻居点的权重。
+- 一种方法为使用高斯密度函数生成结点的权重
+$$
+f(x)=a\cdot e^{-\frac{(x-b)^2}{2c^2}}
+$$
 ```python
-def majority_vote(x, k_list, kd_tree):
+# 生成未标准化的权重
+def gaussian(dist, a=1, b=0, c=0.5):
+    return a * np.exp(-(dist - b)**2/(2*c**2))
+```
+
+---
+# 5. `kd`树: 决策规则
+- 结点权重的计算步骤:
+    - 根据距离计算出未标准化的权重
+    - 对未标准化的权重进行标准化
+    - 分类时，根据各近邻点的类别分类，然后加总其权重，取加总权重最大值对应的类别作为目标特征的预测类别
+    - 回归时，对各近邻点的标签值按权重进行加权平均，作为目标特征的预测标签值
+
+
+---
+# 5. `kd`树: 决策规则
+- 分类
+```python
+def majority_vote(x, k_list, kd_tree, weight=False):
     y_dict = {}
-    for _, node in k_list:
+    dist_list = [k[0] for k in k_list]
+    if weight:
+        weight_list = [gaussian(x) for x in dist_list]
+        weight_list = [x / np.sum(weight_list) for x in weight_list]
+    else:
+        weight_list = np.ones_like(dist_list)
+        
+    for i, (_, node) in enumerate(k_list):
         y = kd_tree.nodes[node]['point'][1]
-        if y in y_dict:
-            y_dict[y] += 1
-        else:
-            y_dict[y] = 1
+        y_dict[y] = y_dict.get(y, 0) + weight_list[i]
+    
     return sorted(list(y_dict.items()), key=lambda x: x[1])[-1][0]
 ```
 
 ---
 # 5. `kd`树: 决策规则
-## 5.2 回归
+- 回归
 
 取`k`近邻对应y的平均值为输入实例的预测值
 $$
-\hat{y} = \frac{1}{k}\sum_{x_i\in N_k(x)}y_i
+\hat{y} = \sum_{x_i\in N_k(x)}y_i\cdot w_i
 $$
+其中，$w_i$为近邻i对应的标准化权重值，$y_i$为近邻i对应的标签值。
 
 ---
 # 5. `kd`树: 决策规则
-## 5.2 回归
+- 回归
 
 ```python
-def average_k_nn(x, k_list, kd_tree):
+def average_k_nn(x, k_list, kd_tree, weight=False):
     y_list = []
-    for _, node in k_list:
+    dist_list = []
+    for dist, node in k_list:
         y = kd_tree.nodes[node]['point'][1]
         y_list.append(y)
-
-    return sum(y_list) / len(y_list)
+        dist_list.append(dist)
+    
+    if weight:
+        weight_list = [gaussian(x) for x in dist_list]
+        weight_list = [x / np.sum(weight_list) for x in weight_list]
+    else:
+        weight_list = np.ones_like(weight_list)
+        
+    pred_y = np.average(y_list, weights=weight_list)
+    
+    return pred_y
 ```
+
+---
+# 5. `kd`树应用
+
 
 ---
 # 作业

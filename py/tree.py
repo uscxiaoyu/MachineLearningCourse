@@ -24,6 +24,14 @@ class Tree:
         添加1个结点
         """
         self.nodes_dict[node_id] = {}
+    
+    def add_nodes_from(self, node_ids):
+        """
+        添加多个结点
+        """
+        for node_id in node_ids:
+            self.nodes_dict[node_id] = {}
+        
 
     def add_edge(self, u, v, attr_dict=None):
         """
@@ -40,16 +48,31 @@ class Tree:
                 self.edges_dict[(u, v)] = {}
         else:
             print(f"{(u, v)} has already existed!")
+            
+    def add_edges_from(self, edge_list, attr_list=None):
+        """
+        添加多条边
+        """
+        if attr_list:
+            for i, (u, v) in enumerate(edge_list):
+                self.add_edge(u, v, attr_dict=attr_list[i])
+        else:
+            for u, v in edge_list:
+                self.add_edge(u, v)
+    
 
     def remove_node(self, node_id):
         """
-        删除1个结点
+        删除1个结点及其后代结点
         """
         try:
-            self.nodes_dict.pop(node_id)
-            for edge in self.edges_dict:
-                if node_id in edge:
+            subtree = self.get_subtree(node_id)
+            for node in subtree:
+                self.nodes_dict.pop(node)
+                to_del_edges = [edge for edge in self.edges_dict if node in edge]  # 需删除的边
+                for edge in to_del_edges:
                     self.edges_dict.pop(edge)
+                        
         except Exception as e:
             print(e)
 
@@ -60,6 +83,7 @@ class Tree:
         edge = (u, v)
         try:
             self.edges_dict.pop(edge)
+            self.remove_node(v)  # 由v出发的子树已不属于原树
         except Exception as e:
             print(e)
 
