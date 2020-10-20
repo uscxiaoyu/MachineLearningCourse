@@ -342,6 +342,28 @@ def generate_kd_tree(X, y):
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
 
+## `k`值的选择
+- 如果选择较小的k值
+    - 学习的近似误差（*对训练集的预测误差*）会减小，但学习的估计误差（*对预测集的预测误差*）会增大
+    - 噪声敏感
+    - k值得减小意味着整体模型变得复杂，容易发生过拟合
+- 如果选择较大的k值
+    - 学习的估计误差减小，但学习的近似误差会增大
+    - k值得增大意味着整体的模型变得简单
+
+---
+# 4. `kd`树: 基于kd树搜索k个近邻
+
+## 举例2
+- 判断是否为最近邻点
+- 判断下一个搜索点
+
+---
+![bg fit](./pictures/3.2.svg)
+
+---
+# 4. `kd`树: 基于kd树搜索k个近邻
+
 **算法3.3 （基于kd树的k最优近邻搜索）**
 
 - 输入: 已构造的`kd`树，目标点`x`，邻居数量`k`
@@ -358,7 +380,7 @@ def generate_kd_tree(X, y):
 **算法3.3 （基于kd树的k最优近邻搜索）**
 - 算法过程
     - (2)如果`node is None`，则跳转至(3); 否则，进行以下循环
-        - (2.2)否则，将`node`标记为已访问，然后计算`node`至`x`的距离`dist_node_x`，如果**`k_list`的元素个数小于`k`**或者**`dist_node_x`小于`k_list`中的最远距离**，将`(dist_node_x, node)`添加至`k_list`，且保留距离`x`最近的`k`个距离及其结点；最后，判断下一轮需访问的结点
+        - (2.2)否则，将`node`标记为已访问，然后计算`node`至`x`的距离`dist_node_x`，如果 **`k_list`的元素个数小于`k`** 或者 **`dist_node_x`小于`k_list`中的最远距离**，将`(dist_node_x, node)`添加至`k_list`，且保留距离`x`最近的`k`个距离及其结点；最后，获取下一轮需访问的结点
             - 如果`node`为叶结点，则下一轮的结点为`node`的父结点`parent_node`，即`node:=parent_node`
 
 ---
@@ -370,22 +392,12 @@ def generate_kd_tree(X, y):
         - (2.2)
             - 如果`node`为非叶结点，计算x至`node`分割平面的距离`dist_div_x`
                 - 如果`dist_div_x`大于等于k_list中的最大距离，若`node`有父结点，则`node:=parent_node`；若`node`无父结点(即为跟节点)，则`node:=None`；
-                - 如果`dist_div_x`小于k_list中的最大距离，则搜索以`node`根结点的未被访问的另一分支，找到该分支距离`x`最近的叶结点，并将其设为`node`
+                - 如果`dist_div_x`小于k_list中的最大距离，则搜索以`node`作为根结点的未被访问的另一分支，找到该分支距离`x`最近的叶结点，并将其设为`node`
     - 返回`k_list`
 
 ---
-![bg right:60% fit](./pictures/3.2.svg)
-# 上行或者下行?
-
----
 # 4. `kd`树: 基于kd树搜索k个近邻
-
-## 举例2
-
-
----
-# 4. `kd`树: 基于kd树搜索k个近邻
-- 确定由node作为根结点的距x最近的叶结点
+- 返回由node作为根结点的距x最近的叶结点
 ```python
 def search_kd_tree(x, node, kd_tree):
     '''
@@ -404,7 +416,7 @@ def search_kd_tree(x, node, kd_tree):
 
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
-- 从叶结点回退，寻找距离x最近的k近邻
+- 从叶结点回退，寻找距离x最近的k个近邻
 ```python
 def find_k_neighbors(x, node, k, kd_tree):
     '''
@@ -418,6 +430,7 @@ def find_k_neighbors(x, node, k, kd_tree):
             c_nodes = list(kd_tree.predecessors(node))
             node = c_nodes[0] if c_nodes else None
             continue
+
         trace_list.append(node)
         dim = kd_tree.nodes[node]['dim']  # 结点的切分维度
         node_x = kd_tree.nodes[node]['point'][0]  # 结点保存的数据特征x
@@ -431,7 +444,8 @@ def find_k_neighbors(x, node, k, kd_tree):
 ```python
         ...
         # 更新k_list
-        if (len(k_list) < k or dist_node_x < k_list[-1][0]) and kd_tree.nodes[node]['y'].size > 0:
+        if (len(k_list) < k or dist_node_x < k_list[-1][0]) \
+            and kd_tree.nodes[node]['y'].size > 0:
             k_list.append([dist_node_x, node])
             k_list = sorted(k_list)[:k]
 
@@ -443,10 +457,11 @@ def find_k_neighbors(x, node, k, kd_tree):
         
         # 3. 非叶结点
         if dist_div_x > k_list[-1][0]:  # 往上
-            parent_nodes = list(kd_tree.predecessors(node))  # 获取node的直接父结点
+            parent_nodes = list(kd_tree.predecessors(node))
             node = parent_nodes[0] if parent_nodes else None
         else:  # 往下
-            t_node = [i for i in kd_tree.successors(node) if i not in trace_list][0]
+            t_node = [i for i in kd_tree.successors(node) 
+                        if i not in trace_list][0]
             node = search_kd_tree(x, t_node, kd_tree)
             
     return k_list
@@ -479,7 +494,7 @@ $$
 # 5. `kd`树: 决策规则
 ![bg right:40% fit](./pictures/3.3.svg)
 - 近邻影响的加权。 在得到距离`x`的k个最近邻后，可以根据最近邻与`x`之间的距离进行加权。由于权重与距离呈反比，因此根据一定规则由距离计算出各邻居点的权重。
-- 一种方法为使用高斯密度函数生成结点的权重
+- 一种方法: 使用高斯密度函数生成结点的权重
 $$
 f(x)=a\cdot e^{-\frac{(x-b)^2}{2c^2}}
 $$
@@ -507,7 +522,7 @@ def majority_vote(x, k_list, kd_tree, weight=False):
     dist_list = [k[0] for k in k_list]
     if weight:
         weight_list = [gaussian(x) for x in dist_list]
-        weight_list = [x / np.sum(weight_list) for x in weight_list]
+        weight_list = [x/np.sum(weight_list) for x in weight_list]
     else:
         weight_list = np.ones_like(dist_list)
         
@@ -553,12 +568,31 @@ def average_k_nn(x, k_list, kd_tree, weight=False):
 ```
 
 ---
-# 5. `kd`树应用
+# 6. `kd`树应用
 
+- 身高预测
+
+- 鸢尾花
 
 ---
-# 作业
+# 7. knn算法特点
 
-除以`kd`树存储训练实例外，`knn`也可采用`Ball tree`存储训练实例。请参照`kd`树的实现，基于`python`实现`Ball tree`的生成算法和搜索算法。
+- 优点
+    - 精度高
+    - 对异常值不敏感
+    - 无数据输入假定
+- 缺点
+    - 计算复杂度高
+    - 空间复杂度高
 
-> 将所有样本放到一个超球体里，找到其中一个样本作为球心`x0`，使得所有其它样本到它的最大距离最短。然后，找到一个离 `x0`最远的点`x1`，再找到离`x1`最远的点为`x2`，把球体内所有样本分按就近原则分别分配给`x1`或`x2`，重新调整两个球的球心，在此基础上构建两个子球体。递归下去，直到球中只包含一个样本，就不再切割。
+---
+# 作业1
+
+除以`kd`树存储训练实例外，`knn`也可采用`Ball tree`存储训练实例。请参照`kd`树的实现，基于`python`实现`Ball tree`的生成算法和搜索算法。以下是`Ball tree`的一种实现方法：
+
+> 将所有样本放到一个超球体里，找到其中一个样本作为球心$x_0$，使得所有其它样本到它的最大距离最短。然后，找到一个离 $x_0$最远的点$x_1$，再找到离$x_1$最远的点为$x_2$，把球体内所有样本分按就近原则分别分配给$x_1$或$x_2$，重新调整两个球的球心，在此基础上构建两个子球体。递归下去，直到最终球中只包含一个样本，就不再切割。
+
+---
+![bg right:50% fit](./pictures/3.4.jpg)
+
+> Omohundro, S.M. Five Balltree Construction Algorithms[J]. International Computer Science Institute Technical Report (1989).
