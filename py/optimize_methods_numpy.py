@@ -3,7 +3,7 @@ import matplotlib.animation as animation
 import numpy as np
 
 
-def grad_desc(f, grad_f, x0, learn_rate=0.05):
+def gd_numpy(f, grad_f, x0, learn_rate=0.05):
     """
     f: 待优化目标函数, grad_f: f的梯度, x0: 参数初值, learn_rate: 学习率
     """
@@ -24,15 +24,15 @@ def grad_desc(f, grad_f, x0, learn_rate=0.05):
     return trace_x
 
 
-def grad_desc_with_momentum(f, grad_f, x0, beta=0.5, learn_rate=0.05):
+def gd_momen_numpy(f, grad_f, x0, beta=0.5, learn_rate=0.05):
     trace_x = np.array([x0])
     x = x0
     m_0 = 0
     i = 0
     while True:
         grad = grad_f(x)
-        m_1 = beta * m_0 + (1 - beta) * grad
-        x = x - learn_rate * m_1
+        m_1 = beta * m_0 + learn_rate * grad
+        x = x - m_1
         trace_x = np.concatenate([trace_x, x.reshape(1, -1)])
         if i % 5 == 0:
             print(f"迭代次数: {i}, 目标函数值f: {f(x):.6f}")
@@ -47,16 +47,16 @@ def grad_desc_with_momentum(f, grad_f, x0, beta=0.5, learn_rate=0.05):
     return trace_x
 
 
-def adaptive_momentum(f, grad_f, x0, beta1=0.5, beta2=0.5, learn_rate=0.05):
+def adam_numpy(f, grad_f, x0, beta1=0.9, beta2=0.999, learn_rate=0.05, max_iter=1000, epsilon=1e-8):
     trace_x = np.array([x0])
     x = x0
     m_0, v_0 = 0, 0
-    i = 0
-    while True:
+    i = 1
+    while i <= max_iter:
         grad = grad_f(x)
-        m_1 = beta1 * m_0 + (1 - beta1) * grad
-        v_1 = beta2 * v_0 + (1 - beta2) * grad ** 2
-        x = x - learn_rate * m_1 / np.sqrt(v_1)
+        m_1 = (beta1 * m_0 + (1 - beta1) * grad) / (1 - beta1 ** i)
+        v_1 = (beta2 * v_0 + (1 - beta2) * grad ** 2) / (1 - beta1 ** i)
+        x = x - learn_rate * m_1 / (np.sqrt(v_1) + epsilon)
         trace_x = np.concatenate([trace_x, x.reshape(1, -1)])
         if i % 5 == 0:
             print(f"迭代次数: {i}, 目标函数值f: {f(x):.6f}")
@@ -85,9 +85,9 @@ if __name__ == "__main__":
         """
         return np.array([2 * x[0], 4 * x[1]])  # gradient
 
-    # res = grad_desc(f, grad_f, x0=np.array([3, 3]), learn_rate=0.2)
-    res = grad_desc_with_momentum(f, grad_f, x0=np.array([3, 3]), beta=0.5, learn_rate=0.2)
-    # res = adaptive_momentum(f, grad_f, x0=np.array([3, 3]), beta1=0.5, beta2=0.5, learn_rate=0.2)
+    # res = gd_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.2)
+    res = gd_momen_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.05)
+    # res = adam_numpy(f, grad_f, x0=np.array([3, 3]), beta1=0.6, beta2=0.8, learn_rate=0.05)
 
     # 绘制动画
     a0, a1 = res[:, 0].tolist(), res[:, 1].tolist()

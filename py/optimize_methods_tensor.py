@@ -31,54 +31,54 @@ def grad_desc(lossfunc, w, x_dict, learn_rate=0.05, max_iters=1000):
 
 def grad_desc_with_momentum(lossfunc, w, x_dict, beta=0.5, learn_rate=0.05, max_iter=1000):
     trace_w = w.clone().data.reshape(1, -1)
-    m_0 = 0
-    i = 0
-    while True:
+    v_0 = 0
+    i = 1
+    while i <= max_iter:
         l = lossfunc(w=w, **x_dict)
         l.backward()
-        m_1 = beta * m_0 + (1 - beta) * w.grad.data
-        w.data.sub_(learn_rate * m_1)
+        v_1 = beta * v_0 + learn_rate * w.grad.data
+        w.data.sub_(v_1)
         with torch.no_grad():
             trace_w = torch.cat([trace_w, w.detach().data.reshape(1, -1)], 0)
-            if (i + 1) % 10 == 0:
+            if i % 10 == 0:
                 loss = lossfunc(w=w, **x_dict).data.numpy()
-                print(f"迭代次数: {i+1}, 损失函数值: {loss:.4f}")
+                print(f"迭代次数: {i}, 损失函数值: {loss:.4f}")
 
-            if torch.sum(torch.abs(trace_w[-1] - trace_w[-2])) < 1e-3 or i > max_iter:  # 停止条件
+            if torch.sum(torch.abs(trace_w[-1] - trace_w[-2])) < 1e-3:  # 停止条件
                 break
 
         w.grad.zero_()
-        m_0 = m_1
+        v_0 = v_1
         i += 1
 
-    print(f"共迭代{i}次, 损失函数值: {lossfunc(w=w, **x_dict).data.numpy():.4f}, 最优参数值: {w.tolist()}")
+    print(f"共迭代{i-1}次, 损失函数值: {lossfunc(w=w, **x_dict).data.numpy():.4f}, 最优参数值: {w.tolist()}")
     return trace_w
 
 
-def adaptive_momentum(lossfunc, w, x_dict, beta1=0.5, beta2=0.5, learn_rate=0.05, max_iter=1000):
+def adaptive_momentum(lossfunc, w, x_dict, beta1=0.5, beta2=0.9, learn_rate=0.999, max_iter=1000, epsilon=1e-8):
     trace_w = w.clone().data.reshape(1, -1)
-    m_0, v_0 = 0, 0
-    i = 0
-    while True:
+    v_0, s_0 = 0, 0
+    i = 1
+    while i <= max_iter:
         l = lossfunc(w=w, **x_dict)
         l.backward()
-        m_1 = beta1 * m_0 + (1 - beta1) * w.grad.data
-        v_1 = beta2 * v_0 + (1 - beta2) * w.grad.data ** 2
-        w.data.sub_(learn_rate * m_1 / torch.sqrt(v_1))
+        v_1 = (beta1 * v_0 + (1 - beta1) * w.grad.data) / (1 - beta1 ** i)
+        s_1 = (beta2 * s_0 + (1 - beta2) * w.grad.data ** 2) / (1 - beta2 ** i)
+        w.data.sub_(learn_rate * v_1 / (torch.sqrt(s_1) + epsilon))
         with torch.no_grad():
             trace_w = torch.cat([trace_w, w.detach().data.reshape(1, -1)], 0)
-            if (i + 1) % 10 == 0:
+            if i % 10 == 0:
                 loss = lossfunc(w=w, **x_dict).data.numpy()
-                print(f"迭代次数: {i+1}, 损失函数值: {loss:.4f}")
+                print(f"迭代次数: {i}, 损失函数值: {loss:.4f}")
 
-            if torch.sum(torch.abs(trace_w[-1] - trace_w[-2])) < 1e-3 or i > max_iter:  # 停止条件
+            if torch.sum(torch.abs(trace_w[-1] - trace_w[-2])) < 1e-3:  # 停止条件
                 break
 
         w.grad.zero_()
-        m_0, v_0 = m_1, v_1
+        v_0, s_0 = v_1, s_1
         i += 1
 
-    print(f"共迭代{i}次, 损失函数值: {lossfunc(w=w, **x_dict).data.numpy():.4f}, 最优参数值: {w.tolist()}")
+    print(f"共迭代{i - 1}次, 损失函数值: {lossfunc(w=w, **x_dict).data.numpy():.4f}, 最优参数值: {w.tolist()}")
     return trace_w
 
 
