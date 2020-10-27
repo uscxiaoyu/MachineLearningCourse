@@ -118,13 +118,12 @@ $$
 ---
 # 1.线性回归模型
 
-## 评价指标
-
-- 回归平方和：$\mathrm{SS_{res}}=\sum_{i=1}^{n}(y_i - f(x_i))^2$
-
-- 总平方和：$\mathrm{SS_{tot}=\sum_{i=1}^n(y_i-\bar{y})^2}$
+## 模型评价指标
 
 - 决定系数：$R^2 = \mathrm{\frac{SS_{tot}-SS_{res}}{SS_{tot}}}$
+    - 回归平方和：$\mathrm{SS_{res}}=\sum_{i=1}^{n}(y_i - f(x_i))^2$
+    - 总平方和：$\mathrm{SS_{tot}=\sum_{i=1}^n(y_i-\bar{y})^2}$
+
 
 
 ---
@@ -170,14 +169,33 @@ def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.
 # 1.线性回归模型
 ## 加入惩罚项的损失函数
 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
-- L1: Lasso regression
+- `L1: Lasso regression`
 $$
-\min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T+\frac{1}{2}\lambda \sum_{i=1}^d|\hat{w}|
+\min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T+\frac{1}{2}\lambda \sum_{i=1}^d|w_i|
 $$
 
-- L2: Ridge resgression
+等价于
+
 $$
-\min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T+\frac{1}{2}\lambda \hat{w}\hat{w}^T
+\min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T \\
+\text{s.t.  } \sum_{i=1}^d|w_i|\leq t 
+$$
+
+---
+# 1.线性回归模型
+## 加入惩罚项的损失函数
+正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
+
+- `L2: Ridge resgression`
+$$
+\min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T+\frac{1}{2}\lambda ww^T
+$$
+
+等价于
+
+$$
+\min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T \\
+\text{s.t.  } ww^T \leq t 
 $$
 
 ---
@@ -198,15 +216,15 @@ def meanSquaredLoss_Penalty(X, y, w, delta=0.5, l=2):
     if l == 0:
         penalty = 0
     elif l == 1:
-        penalty = torch.sum(torch.abs(w))
+        penalty = torch.sum(torch.abs(w.reshape(-1)[:-1]))
     else:
-        penalty = torch.sqrt(torch.dot(w.reshape(-1), w.reshape(-1)))
+        penalty = torch.sqrt(torch.dot(w.reshape(-1)[:-1], w.reshape(-1)[:-1]))
     return (sLoss + delta*penalty) / y.numel()
 ```
 
 ---
 # 1.线性回归模型
-## 梯度
+## 损失函数`mse`对`w`的梯度
 ```python
 def grad_mse_w(X, y, w):
     '''
@@ -363,7 +381,7 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
 from torch.utils.data import TensorDataset, DataLoader
 
 batch_size = 10  # 构建10个批次的训练集
-p_features = features[:, :-1]
+p_features = features[:, :-1]  # 排除偏置
 dataset = TensorDataset(p_features, labels)
 data_iter = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 
