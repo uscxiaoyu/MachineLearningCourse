@@ -4,3 +4,4 @@ dataset/*
 *.pdf
 .vscode/
 py/.ipynb_checkpoints/
+.vscode/settings.json

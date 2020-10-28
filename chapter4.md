@@ -17,9 +17,11 @@ headingDivider: 0
 
 ---
 # 0.概述
-- 线性回归输出是一个连续值，因此适用于回归问题。回归问题在实际中很常见，如预测房屋价格、气温、销售额等连续值的问题。与回归问题不同，分类问题中模型的最终输出是一个离散值。我们所说的图像分类、垃圾邮件识别、疾病检测等输出为离散值的问题都属于分类问题的范畴。`logit`和`softmax`回归则适用于分类问题。
+- 线性回归输出是一个连续值，因此适用于回归问题。回归问题在实际中很常见，如预测房屋价格、气温、销售额等连续值的问题。
 
-- 由于线性回归\、`logit`回归和`softmax`回归都是单层神经网络，它们涉及的概念和技术同样适用于大多数的深度学习模型。我们首先以线性回归为例，介绍大多数深度学习模型的基本要素和表示方法。
+- 与回归问题不同，分类问题中模型的最终输出是一个离散值。我们所说的图像分类、垃圾邮件识别、疾病检测等输出为离散值的问题都属于分类问题的范畴。`logit`和`softmax`回归则适用于分类问题。
+
+- 由于线性回归、`logit`回归和`softmax`回归都是单层神经网络，它们涉及的概念和技术同样适用于大多数的深度学习模型。我们首先以线性回归为例，介绍大多数深度学习模型的基本要素和表示方法。
 
 ---
 # 0.概述
@@ -70,22 +72,22 @@ $$
 ---
 # 1.线性回归模型
 
-## 学习准则1: 最小二乘
+## 学习准则1: 最小化总(均方)平方误差
 - 如何确定$\mathbf{\hat\omega}$呢？关键在于衡量$f(\mathbf{x})$和$y$的差别。均方误是回归任务中最常用的性能衡量指标，因此我们可以试图让均方误差最小化.
 $$
 \mathbf{\hat\omega^*}=\operatorname*{argmin}_{\mathbf{\hat\omega}}\mathbf{(y-X\hat\omega)^T(y-X\hat\omega)}.
 $$
 
-令$E_{\mathbf{\hat\omega}}=\mathbf{(y-X\hat\omega)^T(y-X\hat\omega)}$，对$\mathbf{\hat\omega}$求导可得
+- 令$E_{\mathbf{\hat\omega}}=\mathbf{(y-X\hat\omega)^T(y-X\hat\omega)}$，对$\mathbf{\hat\omega}$求导可得
 $$
 \cfrac{\partial E_{\hat{w}}}{\partial \hat{w}}=2\mathbf{X}^T(\mathbf{X}\hat{w}-\mathbf{y}).
 $$
 
-令上式为0可得$\mathbf{\hat\omega}$最优解的封闭解。
+- 令上式为0可得$\mathbf{\hat\omega}$最优解的封闭解。
 
 ---
 # 1.线性回归模型
-## 学校准则2: 最大似然估计
+## 学校准则2: 最大化(对数)似然率
 - 假定残差服从正态分布，$\epsilon\sim N(0,\sigma^2)$，即有$(y-xw^T)\sim N(0,\sigma^2)$
 - 根据最大似然估计原则，建立优化目标
 $$
@@ -167,15 +169,12 @@ def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.
 
 ---
 # 1.线性回归模型
-## 加入惩罚项的损失函数
-正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
+## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
 - `L1: Lasso regression`
 $$
 \min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T+\frac{1}{2}\lambda \sum_{i=1}^d|w_i|
 $$
-
 等价于
-
 $$
 \min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T \\
 \text{s.t.  } \sum_{i=1}^d|w_i|\leq t 
@@ -183,8 +182,7 @@ $$
 
 ---
 # 1.线性回归模型
-## 加入惩罚项的损失函数
-正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
+## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
 
 - `L2: Ridge resgression`
 $$
@@ -195,7 +193,7 @@ $$
 
 $$
 \min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T \\
-\text{s.t.  } ww^T \leq t 
+\text{s.t.  } ww^T \leq t
 $$
 
 ---
@@ -203,7 +201,7 @@ $$
 ## 加入惩罚项的损失函数
 
 ```python
-def meanSquaredLoss_Penalty(X, y, w, delta=0.5, l=2):
+def meanSquaredLoss_Penalty(X, y, w, delta=0.5, l=0):
     """
     X: N*a, N为样本数量，a为（增广）特征维度
     y: N, 标签
@@ -251,6 +249,8 @@ def grad_mse_w(X, y, w):
 ---
 # 1.线性回归模型
 ## 基于梯度下降实现多元线性回归
+- 自己写导数
+
 ```python
 def lm_grad_desc(features, labels, epochs=100, learn_rate=0.05):
     w = torch.randn(features.shape[1], 1)
@@ -262,6 +262,35 @@ def lm_grad_desc(features, labels, epochs=100, learn_rate=0.05):
 
     return w
 ```
+
+---
+# 1.线性回归模型
+## 基于梯度下降实现多元线性回归
+- 基于`torch`自动求导机制
+```python
+def lm_gd_auto(features, labels, epochs=100, learn_rate=0.05):
+    w = torch.randn(size=(features.shape[1], 1), requires_grad=True)  # 参数初始化
+    for epoch in range(epochs):
+        loss = meanSquaredLoss(features, labels, w)  # 计算损失函数值
+        loss.backward()  # 反向传播误差，计算梯度
+        w.data.sub_(learn_rate * w.grad.data)
+        w.grad.data.zero_()  # 需将梯度重置为0，否则会被累加，影响迭代结果
+        if (epoch + 1) % 10 == 0:
+            with torch.no_grad():  # 不计算梯度，加速损失函数的运算
+                train_l = meanSquaredLoss(features, labels, w)
+                # detach得到一个有着和原tensor相同数据的tensor
+                est_w = w.detach().data.reshape(-1).numpy()
+                print(f'epoch {epoch + 1}, mean of squared loss: {train_l.numpy():.4f}')
+
+    return w.detach().data
+```
+
+---
+# 练习1
+- 请基于`torch`实现多项式回归的参数学习与预测。
+$$
+y=\alpha + \sum_{j=1}^{p}X^jw_j
+$$
 
 ---
 # 1.线性回归模型
@@ -363,7 +392,7 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
         if (epoch + 1) % 10 == 0:
             with torch.no_grad():  # 不计算梯度，加速损失函数的运算
                 # 最近一次的损失函数值
-                train_l = meanSquaredLoss(features, labels, w)  
+                train_l = meanSquaredLoss(features, labels, w)
                 # detach得到一个有着和原tensor相同数据的tensor
                 est_w = w.detach().data.reshape(-1).numpy()
                 print(f'epoch {epoch + 1}, mean of squared loss: {train_l.numpy():.4f}')
@@ -371,6 +400,13 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
     return w.detach().data
 
 ```
+
+---
+# 1.线性回归模型
+## 基于小批量随机梯度下降实现多元线性回归
+- 方法3: 基于`torch.nn.Module`实现
+![bg right:60% fit](./pictures/4.2.svg)
+
 
 ---
 # 1.线性回归模型
@@ -393,11 +429,11 @@ data_iter = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 - 方法3: 基于`torch.nn.Module`实现
 
 ```python
-class LinearRegressionModel(torch.nn.Module): 
+class LinearRegressionModel(torch.nn.Module):
     def __init__(self, num_input, num_output):
-        super(LinearRegressionModel, self).__init__() 
+        super(LinearRegressionModel, self).__init__()
         self.layer1 = torch.nn.Linear(num_input, num_output, bias=True)
-        
+
     def forward(self, x):
         y_pred = self.layer1(x)
         return y_pred
@@ -416,7 +452,7 @@ net.layer1.weight.data = torch.randn(num_output, num_input)
 net.layer1.bias.data = torch.randn(1)
 # 定义损失函数
 # reduction指定了应用于output的方法：'none' | 'mean' | 'sum'
-loss = torch.nn.MSELoss(reduction = "sum") 
+loss = torch.nn.MSELoss(reduction = "sum")
 # 定义训练方法
 trainer = torch.optim.SGD(net.parameters(), lr=0.05)  # 随机梯度下降算法
 
@@ -430,21 +466,25 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.05)  # 随机梯度下降算法
 ```python
 # 训练
 num_epochs = 10
-for epoch in range(num_epochs): 
+for epoch in range(num_epochs):
     for X, y in data_iter:
         l = loss(net.forward(X), y)
         trainer.zero_grad()  # 梯度归0
         l.backward()  # 计算梯度
         trainer.step()  # 执行一步随机梯度下降算法
-    
+
     with torch.no_grad():  # 不计算梯度，加速损失函数的运算
-        l_epoch = loss(net(p_features), labels) 
+        l_epoch = loss(net(p_features), labels)
         print('epoch {}, loss {}'.format(epoch+1, l_epoch)) 
 ```
 
 ---
-# 课堂练习1
-请基于`torch`实现多项式回归。
-$$
-y=\alpha + \sum_{j=1}^{j=p}\beta_j x^j
-$$
+# 练习2
+
+- 请基于`torch`实现`Ridge regression`的参数学习。
+
+---
+## 参考资料
+1. 周志华. 机器学习. 2019.
+2. [阿斯顿·张、李沐、扎卡里 C. 立顿、亚历山大 J. 斯莫拉等. 动手学深度学习. 2020.](https://github.com/d2l-ai/d2l-zh)
+3. Christopher M. Bishop. Pattern recognition and machine learning. 2006.
