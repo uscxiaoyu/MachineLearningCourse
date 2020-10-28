@@ -286,7 +286,7 @@ def lm_gd_auto(features, labels, epochs=100, learn_rate=0.05):
 ```
 
 ---
-# 课堂练习1
+# 练习1
 - 请基于`torch`实现多项式回归的参数学习与预测。
 $$
 y=\alpha + \sum_{j=1}^{p}X^jw_j
@@ -392,7 +392,7 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
         if (epoch + 1) % 10 == 0:
             with torch.no_grad():  # 不计算梯度，加速损失函数的运算
                 # 最近一次的损失函数值
-                train_l = meanSquaredLoss(features, labels, w)  
+                train_l = meanSquaredLoss(features, labels, w)
                 # detach得到一个有着和原tensor相同数据的tensor
                 est_w = w.detach().data.reshape(-1).numpy()
                 print(f'epoch {epoch + 1}, mean of squared loss: {train_l.numpy():.4f}')
@@ -452,7 +452,7 @@ net.layer1.weight.data = torch.randn(num_output, num_input)
 net.layer1.bias.data = torch.randn(1)
 # 定义损失函数
 # reduction指定了应用于output的方法：'none' | 'mean' | 'sum'
-loss = torch.nn.MSELoss(reduction = "sum") 
+loss = torch.nn.MSELoss(reduction = "sum")
 # 定义训练方法
 trainer = torch.optim.SGD(net.parameters(), lr=0.05)  # 随机梯度下降算法
 
@@ -482,3 +482,9 @@ for epoch in range(num_epochs):
 # 练习2
 
 - 请基于`torch`实现`Ridge regression`的参数学习。
+
+---
+## 参考资料
+1. 周志华. 机器学习. 2019.
+2. [阿斯顿·张、李沐、扎卡里 C. 立顿、亚历山大 J. 斯莫拉等. 动手学深度学习. 2020.](https://github.com/d2l-ai/d2l-zh)
+3. Christopher M. Bishop. Pattern recognition and machine learning. 2006.
