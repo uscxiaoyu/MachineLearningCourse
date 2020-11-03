@@ -327,7 +327,7 @@ $$
 ---
 # 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
-```
+```python
 # 随机选取batch_size数量的数据，生成器
 def sampleData(batch_size, features, labels):
     """
@@ -335,7 +335,7 @@ def sampleData(batch_size, features, labels):
     """
     num_examples = len(features)
     indices = list(range(num_examples))
-    # 随机打乱索引次序
+    # 通过随机打乱索引次序进行随机化
     random.shuffle(indices)
     for i in range(0, num_examples, batch_size):
         j = torch.tensor(indices[i: min(i + batch_size, num_examples)])
@@ -345,7 +345,7 @@ def sampleData(batch_size, features, labels):
 ---
 # 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
-- 方法1: 自动写导数
+- 方法1: 自己定义导数
 ```python
 def lm_mb_grad_desc(features, labels, batch_size=20, 
                     epochs=100, learn_rate=0.05):
@@ -361,6 +361,26 @@ def lm_mb_grad_desc(features, labels, batch_size=20,
     return w
 ```
 > 当`batch_size=1`时，即为随机梯度下降
+
+---
+# 1.线性回归模型
+## 基于小批量随机梯度下降实现多元线性回归
+- 方法2: 利用`torch`的自动求导机制
+    - **自动微分（Automatic Differentiation，AD）** 是一种可以对一个（程序）函数进行计算导数的方法。符号微分的处理对象是数学表达式，而自动微分的处理对象是一个函数或一段程序。
+
+    - 自动微分的基本原理是所有的数值计算可以分解为一些基本操作，包含`+, −, ×, / `和一些初等函数`exp, log, sin, cos`等，然后利用链式法则来自动计算一个复合函数的梯度。
+
+---
+# 1.线性回归模型
+## 基于小批量随机梯度下降实现多元线性回归
+方法2: 利用`torch`的自动求导机制
+![bg right:60% fit](./pictures/4.3.jpg)
+
+$$
+f(x;w,b)=\frac{1}{\exp(-(wx+b))+1}
+$$
+> 图片来源: 《神经网络与深度学习》图4.8
+
 
 ---
 # 1.线性回归模型
@@ -455,7 +475,6 @@ net.layer1.bias.data = torch.randn(1)
 loss = torch.nn.MSELoss(reduction = "sum")
 # 定义训练方法
 trainer = torch.optim.SGD(net.parameters(), lr=0.05)  # 随机梯度下降算法
-
 ```
 
 ---
@@ -486,5 +505,6 @@ for epoch in range(num_epochs):
 ---
 ## 参考资料
 1. 周志华. 机器学习. 2019.
-2. [阿斯顿·张、李沐、扎卡里 C. 立顿、亚历山大 J. 斯莫拉等. 动手学深度学习. 2020.](https://github.com/d2l-ai/d2l-zh)
-3. Christopher M. Bishop. Pattern recognition and machine learning. 2006.
+2. 邱锡鹏. 神经网络与机器学习. 2020.
+3. [阿斯顿·张、李沐、扎卡里 C. 立顿、亚历山大 J. 斯莫拉等. 动手学深度学习. 2020.](https://github.com/d2l-ai/d2l-zh)
+4. Christopher M. Bishop. Pattern recognition and machine learning. 2006.
