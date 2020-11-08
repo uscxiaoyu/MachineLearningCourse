@@ -12,8 +12,11 @@ headingDivider: 0
 # 主要内容
 
 - 线性回归模型
-- `Logit`回归模型
-- `Softmax`回归模型
+- 线性回归模型的参数学习
+- `torch`实现
+    - 梯度下降
+    - 小批量梯度下降
+    - `torch.nn.Module`
 
 ---
 # 0.概述
