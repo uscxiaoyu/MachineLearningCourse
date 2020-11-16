@@ -119,9 +119,6 @@ def cross_entropy(X, y, W):
 ```
 
 ---
-
-
----
 # 2. `Softmax`回归模型的参数学习
 - 风险函数$\mathbf{R(W)}$关于$W$的梯度为
 $$
