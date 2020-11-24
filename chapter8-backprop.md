@@ -96,11 +96,15 @@ $$
 - 反向传播将给出计算误差$\delta_j^l$的流程，然后将其关联到计算$\frac{\partial{C}}{\partial{w^l_{jk}}}$ 和$\frac{\partial{C}}{\partial{b^l}}$上。
 
 ---
+神经元的误差项
+![bg right:90% fit](./pictures/7.error_z.svg)
+
+---
 # 误差反向传播的4个方程
 
 - 假定在前馈信息传播过程中，l层第i个神经元的净值$z_i^l$增加了$\Delta z_i^l$，则最终损失函数的增量应为$\frac{\partial C}{\partial z_i^l}\Delta z_i^l$。
 
-- 假设$\frac{\partial C}{\partial z_i^l}$有⼀个很⼤的值（或正或负）。那么这个可以通过选择与$\frac{\partial C}{\partial z_i^l}$相反符号的$\Delta z_i^l$来降低代价。相反，如果$\frac{\partial C}{\partial z_i^l}$接近0，那么我们并不能通过扰动带权输⼊$z^l_j$来改善太多代价。这时候神经元已经很接近最优了2。所以这⾥有⼀种启发式的认识， $\frac{\partial C}{\partial z_j^l}$是l层神经元j的误差的度量。
+- 假设$\frac{\partial C}{\partial z_i^l}$有⼀个很⼤的值（或正或负）。那么这个可以通过选择与$\frac{\partial C}{\partial z_i^l}$相反符号的$\Delta z_i^l$来降低代价。相反，如果$\frac{\partial C}{\partial z_i^l}$接近0，那么我们并不能通过扰动带权输⼊$z^l_j$来改善太多代价。这时候神经元已经很接近最优了。所以这⾥有⼀种启发式的认识， $\frac{\partial C}{\partial z_j^l}$是l层神经元j的误差的度量。
 
 - 按照上⾯的描述，我们定义l层的第j个神经元上的误差$\delta_i^l$为：
 $$
@@ -121,7 +125,7 @@ $$
 \delta_j^L=\frac{\partial C}{\partial a_j^L}\sigma'(z_j^L)
 $$
 
->这是⼀个⾮常⾃然的表达式。右式第⼀个项$\frac{\partial C}{\partial a_j^L}$表⽰代价随着j层输出激活值的变化⽽变化的速度。假如C不太依赖⼀个特定的输出神经元j，那么$\frac{\partial C}{\partial a_j^L}$就会很⼩，这也是我们想要的效果。右式第⼆项$\sigma'(z_j^L)$刻画了在$z_j^L$处激活函数$\sigma$变化的速度。
+>右式第⼀个项$\frac{\partial C}{\partial a_j^L}$表⽰代价随着j层输出激活值的变化⽽变化的速度。假如C不太依赖⼀个特定的输出神经元j，那么$\frac{\partial C}{\partial a_j^L}$就会很⼩，这也是我们想要的效果。右式第⼆项$\sigma'(z_j^L)$刻画了在$z_j^L$处激活函数$\sigma$变化的速度。
 >
 >上式也可以重新写成矩阵形式
 >$$
@@ -129,10 +133,6 @@ $$
 >$$
 >
 >例如，如果损失函数为误差平方和时，我们有$\nabla_aC=(a^L-y)$，因此可得$\delta_L=(a^L-y)\odot \sigma'(z^L)$
-
----
-神经元的误差项
-![bg right:90% fit](./pictures/7.error_z.svg)
 
 ---
 # 误差反向传播的4个方程
@@ -143,7 +143,7 @@ $$
 
 >假设我们知道l+1层的误差$\delta^{l+1}$。当我们应⽤转置的权重矩阵$(w^{l+1})^T$ ，我们可以凭直觉地把它看作是在沿着⽹络反向移动误差，给了我们度量在l层输出的误差⽅法。然后，我们进⾏Hadamard 乘积运算$\odot\sigma'(z^l)$。这会让误差通过l 层的激活函数反向传递回来并给出在第l 层的带权输⼊的误差$\delta$。
 
-**通过组合(BP1) 和(BP2)，我们可以计算任何层的误差$\delta^l$。⾸先使⽤(BP1) 计算$\delta^L$，然后应⽤⽅程(BP2) 来计算$\delta^{L-1}$，然后再次⽤⽅程(BP2)来计算$\delta^{L-2}$，如此⼀步⼀步地反向传播完整个⽹络。**
+**通过组合(BP.1) 和(BP.2)，我们可以计算任何层的误差$\delta^l$。⾸先使⽤(BP.1) 计算$\delta^L$，然后应⽤⽅程(BP.2) 来计算$\delta^{L-1}$，然后再次⽤⽅程(BP.2)来计算$\delta^{L-2}$，如此⼀步⼀步地反向传播完整个⽹络。**
 
 ---
 # 误差反向传播的4个方程
@@ -175,8 +175,11 @@ $$
 
 ---
 # 误差反向传播的4个方程
+
+## 交叉熵风险函数
 - 交叉熵风险函数$\mathbf{R(z^L, y)}=-y\cdot\log{a^L}$关于$z^L$的梯度为
 $$\begin{aligned}
+\mathrm{softmax}(z^L) &=  \left(\frac{exp(z^l_1)}{\sum_{j=1}^{M_L}exp(z^l_j)}, ... , \frac{exp(z^l_{M_L})}{\sum_{j=1}^{M_L}exp(z^l_j)}\right)\\
 a^L&=\mathrm{softmax}(z^L), \frac{\partial{C}}{\partial{a_i^L}}=-y_i\frac{1}{a_i^L}\\
 \frac{\partial{C}}{\partial{a^L}} &= -y\odot (a^L)^{-1} = (-y_1\frac{1}{a_1^L}, -y_2\frac{1}{a_2^L}, ..., -y_{M_L}\frac{1}{a_{M_L}^L})
 \end{aligned}
@@ -185,17 +188,21 @@ $$
 
 ---
 # 误差反向传播的4个方程
-
-- 当$i=j$时, 有$\frac{\partial{a_i}}{\partial{b_j}}=a_i(1-a_i)$; 当$i\neq j$时, 有$\frac{\partial{a_i}}{\partial{z_j}}=-a_ia_j$, 因此有
+## 交叉熵风险函数
+- 当$i=j$时, 有$\frac{\partial{a_i}}{\partial{z_j}}=a_i(1-a_i)$; 当$i\neq j$时, 有$\frac{\partial{a_i}}{\partial{z_j}}=-a_ia_j$, 因此有
 
 $$
-\frac{\partial{a^L}}{\partial{z^L}} = \begin{bmatrix} 
+\begin{aligned}
+\frac{\partial{a^L}}{\partial{z^L}} &= \begin{bmatrix} 
 a_1^L(1-a_1^L) & -a_1^La_2^L & ... & -a_1^La_j^L & ... & -a_1^La_{M_L}^L \\ 
 -a_2^La_1^L & a_2^L(1-a_2^L) & ... & a_2^La_j^L & ... & -a_2^La_{M_L}^L \\
 ... & ... & ... & ... & ... & ....\\
 -a_{M_L}^La_1^L & -a_{M_L}^La_2^L & ... & -a_{M_L}^La_j^L & ... & a_{M_L}^L(1-a_{M_L}^L)
-\end{bmatrix}
+\end{bmatrix} \\
+&= (\frac{\partial{a^L}}{\partial{z^L_1}}, \frac{\partial{a^L}}{\partial{z^L_2}}, ..., \frac{\partial{a^L}}{\partial{z^L_{M_L}}})
+\end{aligned}
 $$
+> 若$i = j$, 则有$\frac{\partial \mathrm{softmax}(x_i)}{\partial x_j}=\mathrm{softmax}(x_i)(1-\mathrm{softmax}(x_i))$; 否则, $\frac{\partial \mathrm{softmax}(x_i)}{\partial x_j}=-\mathrm{softmax}(x_i)\mathrm{softmax}(x_i)$
 
 
 ---
@@ -204,7 +211,7 @@ $$
 $$
 \begin{aligned}
 \frac{\partial{C}}{\partial{z^L}} &= \frac{\partial{C}}{\partial{a^L}} \frac{\partial{a^L}}{\partial{z^L}} \\
-&= (\frac{\partial{C}}{\partial{a^L}}\frac{\partial{a^L}}{\partial{z^L_1}}, \frac{\partial{C}}{\partial{a^L}}\frac{\partial{a^L}}{\partial{z^L_2}}, ..., \frac{\partial{C}}{\partial{a^L}}\frac{\partial{a^L}}{\partial{z^L_{M_L}}})
+&= (\frac{\partial{C}}{\partial{a^L}}\frac{\partial{a^L}}{\partial{z^L_1}}, \frac{\partial{C}}{\partial{a^L}}\frac{\partial{a^L}}{\partial{z^L_2}}, ..., \frac{\partial{C}}{\partial{a^L}}\frac{\partial{a^L}}{\partial{z^L_{M_L}}}) 
 \end{aligned}
 $$
 
@@ -218,34 +225,34 @@ $$\delta^L=\frac{\partial{C}}{\partial{z^L}}=a^L-y$$
 # 误差反向传播算法
 反向传播方程给出了一种计算代价函数梯度的方法，可以用以下算法描述:
 
-**输入: 训练集{features, labels}, 训练回合数max_epochs, 学习率lr, 批量大小batch_size**
+**输入: 训练集`{features, labels}`, 训练回合数`max_epochs`, 学习率`lr`, 批量大小`batch_size`**
 **输出: 训练好的前馈神经网络**
 **算法过程:**
-- 初始化当前回合epoch=1, 
-- 如果epoch <= max_epochs, 执行以下操作
+- 初始化当前回合`epoch=1`, 
+- 如果`epoch <= max_epochs`, 执行以下操作
     - 打乱训练集的排序
-    - 由前逐批取出batch_size个样本，然后做以下计算，直到取完所有样本为止
+    - 由前逐批取出`batch_size`个样本，然后做以下计算，直到取完所有样本为止
         - 前馈计算每一层的净值$z^l$和激活值$a^l$，直到最后一层
-        - 反向传播计算每一层的误差$\delta^l$(*公式BP1, BP2*)
-        - 计算损失函数对各层间权重矩阵$w^l$和偏置向量$b^l$的偏导数(*公式BP3, BP4*)
+        - 反向传播计算每一层的误差$\delta^l$(**公式`BP1, BP2`**)
+        - 计算损失函数对各层间权重矩阵$w^l$和偏置向量$b^l$的偏导数(**公式`BP3, BP4`**)
 
 ---
 # 误差反向传播算法
 
 **算法过程:**
+- 如果`epoch <= max_epochs`, 执行以下操作
 ...
-- 如果epoch <= max_epochs, 执行以下操作
-...
-    - 由前逐批取出batch_size个样本，然后做以下计算，直到取完所有样本为止
+    - 由前逐批取出`batch_size`个样本，然后做以下计算，直到取完所有样本为止
         ...
         - 更新权重矩阵和权重矩阵
         $$
         \begin{aligned}
-        w^l &:= w^l - lr*\frac{\delta^l(a(l-1)^T)}{\mathrm{batch\_size}} \\
+        w^l &:= w^l - lr*\frac{\delta^l(a^{(l-1)})^T}{\mathrm{batch\_size}} \\
         b^l &:= b^l - lr*\mathrm{mean}(\delta^l, axis=1)
         \end{aligned}
         $$
     - 更新$epoch := epoch + 1$
+> 注意: (BP.1)~(BP.4)是单一样本的更新，针对小批量样本需对误差项向量取平均。
 
 ---
 # 误差反向传播算法
