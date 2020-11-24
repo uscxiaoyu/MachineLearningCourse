@@ -36,7 +36,7 @@ headingDivider: 0
 - 如何计算这些梯度？
     - 数值方法
     $$
-    \frac{\partial C}{\partial e_{ij}}\approx \frac{C(w_{ij}+\eta\Delta e_{ij}) - C(w_{ij})}{\eta}
+    \frac{\partial C}{\partial w_{ij}}\approx \frac{C(w_{ij}+\eta\Delta e_{ij}) - C(w_{ij})}{\eta}
     $$
     其中$\eta>0$是一个很小的正数，而$e_{ij}$是单位向量。这种方法需要重复多次运行前向传播计算$C$, 效率太低。
     - 符号微分：链式法则
@@ -125,10 +125,10 @@ $$
 >
 >上式也可以重新写成矩阵形式
 >$$
-\delta^L=\Delta_aC\odot R'(z^L)
+\delta^L=\nabla_aC\odot R'(z^L)
 >$$
 >
->例如，如果损失函数为误差平方和时，我们有$\Delta_aC=(a^L-y)$，因此可得$\delta_L=(a^L-y)\odot \sigma'(z^L)$
+>例如，如果损失函数为误差平方和时，我们有$\nabla_aC=(a^L-y)$，因此可得$\delta_L=(a^L-y)\odot \sigma'(z^L)$
 
 ---
 神经元的误差项
@@ -186,7 +186,7 @@ $$
 ---
 # 误差反向传播的4个方程
 
-- 当$i=j$时, 有$\frac{\partial{a_i}}{\partial{b_j}}=a_i(1-a_i)$; 当$i\neq j$时, 有$\frac{\partial{a_i}}{\partial{b_j}}=-a_ia_j$, 因此有
+- 当$i=j$时, 有$\frac{\partial{a_i}}{\partial{b_j}}=a_i(1-a_i)$; 当$i\neq j$时, 有$\frac{\partial{a_i}}{\partial{z_j}}=-a_ia_j$, 因此有
 
 $$
 \frac{\partial{a^L}}{\partial{z^L}} = \begin{bmatrix} 
@@ -231,20 +231,21 @@ $$\delta^L=\frac{\partial{C}}{\partial{z^L}}=a^L-y$$
 
 ---
 # 误差反向传播算法
-反向传播方程给出了一种计算代价函数梯度的方法，可以用以下算法描述:
+
 **算法过程:**
 ...
 - 如果epoch <= max_epochs, 执行以下操作
 ...
     - 由前逐批取出batch_size个样本，然后做以下计算，直到取完所有样本为止
+        ...
         - 更新权重矩阵和权重矩阵
         $$
         \begin{aligned}
         w^l &:= w^l - lr*\frac{\delta^l(a(l-1)^T)}{\mathrm{batch\_size}} \\
-        b^l &:= b^l - lr*mean(\delta^l, axis=1)
+        b^l &:= b^l - lr*\mathrm{mean}(\delta^l, axis=1)
         \end{aligned}
         $$
-    - 更新epoch := epoch + 1
+    - 更新$epoch := epoch + 1$
 
 ---
 # 误差反向传播算法
@@ -648,7 +649,6 @@ class FNN2:
 ```python
 class FNN2:
     ...
-    ...
     def minibatch_sgd_trainer(self, max_epochs=10, lr=0.1, decay=0.0005):
         '''
         训练
@@ -675,3 +675,4 @@ class FNN2:
 1. 邱锡鹏. 神经网络与机器学习. 2020.
 2. [阿斯顿·张、李沐、扎卡里 C. 立顿、亚历山大 J. 斯莫拉等. 动手学深度学习. 2020.](https://github.com/d2l-ai/d2l-zh)
 3. Christopher M. Bishop. Pattern recognition and machine learning. 2006.
+4. Michael Nielsen. Neural network and deep learning. 2016.
