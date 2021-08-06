@@ -1,5 +1,5 @@
 {
-    "python.dataScience.jupyterServerURI": "local",
-    "python.pythonPath": "/usr/local/bin/python3.7",
-    "python.terminal.activateEnvironment": false
+    "python.pythonPath": "/usr/local/bin/python3.8",
+    "python.terminal.activateEnvironment": false,
+    "jupyter.jupyterServerType": "local"
 }
