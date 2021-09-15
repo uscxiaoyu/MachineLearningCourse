@@ -84,10 +84,10 @@ $$
 - 假设训练数据集是线性可分的，感知机学习的目标是求得一个能够将训练集正负实例完全正确分开的分离超平面。
 - 损失函数：误分类点到超平面S的总距离。
 - 输入空间$\mathbb{R^n}$中任意点$x_0$到超平面S的距离
-$$
-\mathrm{dist(x_0,S)}=\frac{1}{\|\omega\|}|\omega\cdot x_0+b|
-$$
-这里，$\|\omega\|$是$\omega$的$L_2$范数。
+    $$
+    \mathrm{dist(x_0,S)}=\frac{1}{\|\omega\|}|\omega\cdot x_0+b|
+    $$
+    这里，$\|\omega\|$是$\omega$的$L_2$范数。
 
 - 对于误分类数据点$(x_i,y_i)$，有$-y_i(\omega\cdot x_i+b)>0$成立。因此
 $$
@@ -100,11 +100,11 @@ $$
 $$
 \mathrm{Dist(M,S)}=-\frac{1}{\|\omega\|}\sum_{x_i\in M}y_i(\omega\cdot x_i+b)
 $$
-- 如果不考虑$\frac{1}{\|\omega\|}$，就得到了感知机学习的损失函数。
+- $\Vert \omega \Vert$是$\omega$的$L_2$范。如果不考虑$\frac{1}{\|\omega\|}$，就得到了感知机学习的损失函数。
 $$
 L(\omega,b)=-\sum_{x_i\in M}y_i(\omega\cdot x_i+b)
 $$
-- 显然，以上损失函数是非负的，如果没有误分类点，则损失函数为0。
+- 显然，以上损失函数是非负的。
 
 ---
 ```python
@@ -128,7 +128,7 @@ $$
 \min_{\omega, b}L(\omega, b)=-\sum_{x_i\in M}y_i(\omega\cdot x_i + b)
 $$
 
-- 感知机是误分类驱动的，具体可采用不同的方法，如梯度下降法、随机梯度下降法等。
+- 感知机是误分类驱动的，具体可采用多种方法，如**梯度下降、随机梯度下降**等。
 - 假设误分类集合$M$是固定的，那么损失函数$L(\omega, b)$的梯度由$\bigtriangledown_{\omega}=-\sum_{x_i\in M}y_ix_i,\bigtriangledown_{b}=-\sum_{x_i\in M}y_i$给出。
 - 随机选取一个误分类点$(x_i,y_i)\in M$，对$\omega, b$进行更新：$\omega := \omega + \eta y_i x_i,b := b + \eta y_i$，其中$0<\eta\leq 1$是步长，也称为学习率。
 - 通过迭代可以减少损失函数$L(\omega, b)$的值，直到$L$为0.
