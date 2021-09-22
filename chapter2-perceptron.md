@@ -16,11 +16,13 @@ header: '**第2章 感知机**'
 - 寻优算法的原始形式
 - 寻优算法的对偶形式
 - 算法实现
+- 算法应用
+- 参考
 
 
 ---
 # 概述
-- 1957年由Rosenblatt提出，是**神经网络**与**支持向量机**的基础。
+- 1957年由`Rosenblatt`提出，是**神经网络**与**支持向量机**的基础。
 - 输入为实例的特征向量，输出为实例的类别，正例取+1，反例取-1；
 - 感知机对应于输入空间中将实例划分为正负两类的分离超平面，属于判别模型；
 - 导入基于误分类的损失函数；
@@ -118,7 +120,7 @@ def loss(w, b, X, y):  # 所有误分类点的误差
     '''
     hat_y = X@w + b
     neg_Dist = -hat_y.reshape(1, -1) * y.reshape(1, -1)  # 误分类点对应的值为正
-    return torch.sum(torch.relu(neg_Dist))  # relu取所有正值, 负值重置为0
+    return torch.sum(neg_Dist[neg_Dist > 0])  # 取所有正值(即误分类点)的和
 ```
 
 ---
@@ -129,7 +131,7 @@ $$
 $$
 
 - 感知机是误分类驱动的，具体可采用多种方法，如**梯度下降、随机梯度下降**等。
-- 假设误分类集合$M$是固定的，那么损失函数$L(\omega, b)$的梯度由$\bigtriangledown_{\omega}=-\sum_{x_i\in M}y_ix_i,\bigtriangledown_{b}=-\sum_{x_i\in M}y_i$给出。
+- 假设误分类集合$M$是固定的，那么损失函数$L(\omega, b)$的梯度由$\bigtriangledown_{\omega}=-\sum_{i\in M}y_ix_i,\bigtriangledown_{b}=-\sum_{i\in M}y_i$给出。
 - 随机选取一个误分类点$(x_i,y_i)\in M$，对$\omega, b$进行更新：$\omega := \omega + \eta y_i x_i,b := b + \eta y_i$，其中$0<\eta\leq 1$是步长，也称为学习率。
 - 通过迭代可以减少损失函数$L(\omega, b)$的值，直到$L$为0.
 
@@ -176,21 +178,17 @@ def grad_desc(f, grad_f, x0, learn_rate=0.05):
 - 输入：训练数据集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$，其中$x_i\in X=\mathbb{R^n}, y_i\in Y=\{-1, +1\}, i=1,2,...,N$; 学习率$\eta(0<\eta\leq 1)$；
 - 输出：$\omega,b$, 感知机模型$f(x)=\mathrm{sign}(\omega\cdot x+b)$
 - 算法过程：
-   - (1) 选取初值$\omega_0, b_0$;
-   - (2) 对于$i\in T$，根据$y_i(\omega\cdot x_i+b)\leq 0$获取误分类点集合M
-   - (3) 在M中随机选取数据$(x_i, y_i)$;
-   - (4) 如果$(y_i(\omega\cdot x_i+b))\leq 0$, 则$\omega := \omega + \eta y_i x_i, b := b + \eta y_i$
-   - (5) 若$M=\emptyset$，则结束算法；否则，转至(2)
+  (1) 选取初值$\omega_0, b_0$;
+  (2) 对于$i\in T$，根据$y_i(\omega\cdot x_i+b)\leq 0$获取误分类点集合M
+  (3) 在M中随机选取数据$(x_i, y_i)$;
+  (4) 如果$(y_i(\omega\cdot x_i+b))\leq 0$, 则$\omega := \omega + \eta y_i x_i, b := b + \eta y_i$
+  (5) 若$M=\emptyset$，则结束算法；否则，转至(2)
 
 ---
 ```python
-# 随机梯度下降学习过程，基于numpy实现
 def learning_perceptron_sgd(X, y, epochs=100, lr=0.03):
     '''
-    X: 特征矩阵
-    y: 标签
-    epochs: 最大训练批次
-    lr: 学习率
+    X: 特征矩阵 N * d | y: 标签 N * 1 | epochs: 最大训练批次 | lr: 学习率
     '''
     w = torch.randn(size=(X.shape[1], 1))  # 随机取特征权重
     b = torch.zeros(size=(1, ))  # 取截距为0
@@ -215,11 +213,7 @@ def learning_perceptron_sgd(X, y, epochs=100, lr=0.03):
 # 批梯度下降学习过程，基于pytorch的自动求导机制实现
 def learn_model(lossfunc, X, y, epochs=50, lr=0.03):
     '''
-    lossfunc: 损失函数
-    X: 特征矩阵
-    y: 标签
-    epochs: 训练批次
-    lr: 学习率
+    lossfunc: 损失函数 | X: 特征矩阵 | y: 标签 | epochs: 训练批次 | lr: 学习率
     '''
     w = torch.randn(size=(X.shape[1], 1), requires_grad=True)
     b = torch.zeros(size=(1, ), requires_grad=True)
@@ -246,7 +240,7 @@ def learn_model(lossfunc, X, y, epochs=50, lr=0.03):
 # 算法收敛性
 **定理2.1 (`Novikoff`)** 设训练集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$是线性可分的，其中$x_i\in\chi=\mathbb{R^n}, y_i\in\mathbf{Y}=\{-1,+1\}, i=1,2,...,N$，则
 - 存在满足条件$||\hat{\omega}_{opt}||=1$的超平面$\hat{\omega}_{opt}\cdot \hat{x}+b_{opt}=0$将训练集完全正确分开；且存在$\gamma > 0$，对于所有的$i=1,2,...,N$有 $y_i(\hat{\omega}_{opt}\cdot x_i+b_{opt})\geq \gamma$
-- 令$R= \max_{\leq i \leq N}||\hat{x_i}||$，则感知机算法2.1在训练集上的误分类次数k满足不等式
+- 令$R= \max_{\leq i \leq N}||\hat{x_i}||$，则感知机算法`2.1`在训练集上的误分类次数k满足不等式
 $$
 k\leq \left(\frac{R}{\gamma}\right)^2
 $$
@@ -256,11 +250,9 @@ $$
 ---
 # 感知机学习算法的对偶形式
 
-- 对偶形式的基本想法是，将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。假定初始值$\omega_0,b_0$均为0，对误分类点$(x_i,y_i)$通过
-$$
-\omega:=\omega+\eta y_i x_i, b:=b+\eta y_i
-$$
-- 逐步修改$\omega, b$，经过n次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$,最后学习到的$\omega, b$可以分别表示为
+- 对偶形式的基本想法: 将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。
+- 假定初始值$\omega_0,b_0$均为0，更新后通过$\omega:=\omega+\eta y_i x_i, b:=b+\eta y_i$ 给出
+- 逐步修改$\omega, b$，经过$n$次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$,最后学习到的$\omega, b$可以分别表示为
 $$
 \omega=\sum_{i=1}^N\alpha_iy_ix_i, b=\sum_{i=1}^N\alpha_iy_i
 $$
@@ -273,11 +265,11 @@ $$
 $$
 \begin{aligned}
 \mathbf{\hat{\omega}} &=  (\omega_1, \omega_2, ..., \omega_n, b) \\
-&= (\sum_{i=1}^N \alpha_i y_i x_i^1, \sum_{i=1}^N \alpha_i y_i x_2^2, ..., \sum_{i=1}^N \alpha_i y_i x_i^n, \sum_{i=1}^N \alpha_i y_i) \\
+&= (\sum_{i=1}^N \alpha_i y_i x_i^{(1)}, \sum_{i=1}^N \alpha_i y_i x_2^{(2)}, ..., \sum_{i=1}^N \alpha_i y_i x_i^{(n)}, \sum_{i=1}^N \alpha_i y_i) \\
 &= (\alpha_{1\times N} \otimes y_{1\times N}^T) \hat{X}_{N\times (n+1)}
 \end{aligned}
 $$
-其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的更新累积量。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f(x_i) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^1, x_i^2, ..., x_i^n, 1)$。
+其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的更新累积量。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f(x_i) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。
 - 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，迭代更新遇到误分类点$x_i$时，直接取对应的列$A_{.,i}$，即计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
 
 ---
@@ -285,20 +277,17 @@ $$
 - 输入：训练数据集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$，其中$x_i\in \mathbf{X=R^n}, y_i\in Y=\{-1, +1\}, i=1,2,...,N$; 学习率$\eta(0<\eta\leq 1)$；
 - 输出：$\mathbf{\alpha},b$，其中$\mathbf{\alpha}=(\alpha_1,\alpha_2,...,\alpha_N)^T$为各数据点更新的次数; 感知机模型$f(x)=\mathrm{sign}(\sum_{j=1}^N \alpha_jy_j\cdot \mathbf{x} +b)$
 - 算法过程：
-  - (1) 更新$\alpha := (0, 0, ..., 0)^T, b:= 0$;
-  - (2) 根据$y_i\left(\sum_{j=1}^N\alpha_j y_j x_j\cdot x_i+b\right)\leq 0$随机选取一个误分类数据$(x_i,y_i)$;
-  - (3) 执行更新$\alpha_i:=\alpha_i+\eta,b:=b+\eta y_i$;
-  - (4) 转至(2)直到没有误分类点
+  (1) 更新$\alpha := (0, 0, ..., 0)^T, b:= 0$;
+  (2) 根据$y_i\left(\sum_{j=1}^N\alpha_j y_j x_j\cdot x_i+b\right)\leq 0$随机选取一个误分类数据$(x_i,y_i)$;
+  (3) 执行更新$\alpha_i:=\alpha_i+\eta,b:=b+\eta y_i$;
+  (4) 转至(2)直到没有误分类点
 
 ---
 
 ```python
 def learning_perceptron_dual_sgd(X, y, epochs=100, lr=0.03):
     '''
-    X: 特征矩阵 N*n
-    y: 标签
-    epochs: 最大训练批次
-    lr: 学习率
+    X: 特征矩阵 N*n | y: 标签 | epochs: 最大训练批次 | lr: 学习率
     '''
     gram = X @ X.t()  # 求X的Gram矩阵 (N, N)
     alpha = torch.zeros(X.shape[0])  # 误分类的更新累积量
@@ -321,3 +310,13 @@ def learning_perceptron_dual_sgd(X, y, epochs=100, lr=0.03):
 ---
 # 感知机应用
 
+
+--- 
+# 感知机的缺陷
+- 不能完美解决线性不可分数据集
+- 最终迭代次数受结果超平面以及训练集的影响较大
+- 损失函数为减少误分类点，最终训练得到的超平面可能距离某些正确分类的点非常近，预测效果并不一定好。
+---
+# 参考
+- Rosenblatt F. The Perceptron: a probabilistic model for information storage and organization in the Brain. Cornell Aeronautical Laboratory. Psychological Review, 1958, 65 (6): 384-408.
+- 李航. 《统计学习方法（第2版）》. 清华大学出版社, 2019.
