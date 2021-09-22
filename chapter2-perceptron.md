@@ -16,11 +16,13 @@ header: '**第2章 感知机**'
 - 寻优算法的原始形式
 - 寻优算法的对偶形式
 - 算法实现
+- 算法应用
+- 参考
 
 
 ---
 # 概述
-- 1957年由Rosenblatt提出，是**神经网络**与**支持向量机**的基础。
+- 1957年由`Rosenblatt`提出，是**神经网络**与**支持向量机**的基础。
 - 输入为实例的特征向量，输出为实例的类别，正例取+1，反例取-1；
 - 感知机对应于输入空间中将实例划分为正负两类的分离超平面，属于判别模型；
 - 导入基于误分类的损失函数；
@@ -308,3 +310,13 @@ def learning_perceptron_dual_sgd(X, y, epochs=100, lr=0.03):
 ---
 # 感知机应用
 
+
+--- 
+# 感知机的缺陷
+- 不能完美解决线性不可分数据集
+- 最终迭代次数受结果超平面以及训练集的影响较大
+- 损失函数为减少误分类点，最终训练得到的超平面可能距离某些正确分类的点非常近，预测效果并不一定好。
+---
+# 参考
+- Rosenblatt F. The Perceptron: a probabilistic model for information storage and organization in the Brain. Cornell Aeronautical Laboratory. Psychological Review, 1958, 65 (6): 384-408.
+- 李航. 《统计学习方法（第2版）》. 清华大学出版社, 2019.
