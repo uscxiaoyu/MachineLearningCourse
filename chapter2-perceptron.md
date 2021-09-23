@@ -31,7 +31,7 @@ header: '**第2章 感知机**'
 
 ---
 # 模型
-**定义2.1 （感知机）** 假设输入空间是$\mathbf{X} \subseteq \mathbb{R^n}$，输出控件是$\mathbf{Y}=\{+1,-1\}$。输入$x\in \mathbf{X}$表示实例的特征向量，对应于输入空间的点；输出$y\in \mathbf{Y}$表示实例的类别。由输入空间到输出空间的如下函数
+**定义2.1 （感知机）** 假设输入空间是$\mathbf{X} \subseteq \mathbb{R^n}$，输出空间是$\mathbf{Y}=\{+1,-1\}$。输入$x\in \mathbf{X}$表示实例的特征向量，对应于输入空间的点；输出$y\in \mathbf{Y}$表示实例的类别。由输入空间到输出空间的如下函数
 $$
 f(x)=\mathrm{sign} (\omega\cdot x+b)
 $$
@@ -256,21 +256,22 @@ $$
 $$
 \omega=\sum_{i=1}^N\alpha_iy_ix_i, b=\sum_{i=1}^N\alpha_iy_i
 $$
-- 实例点更新次数越多，意味着它距离分离超平面越近，也就越难正确分类，即这样的实例对学习结果影响最大。
+- 实例点更新次数越多，说明它对分离超平面越敏感，距离分离超平面越近，也就越难正确分类，即这样的实例对学习结果影响最大。
+- 对偶形式的目的是降低每次迭代的运算量，但是并不是在任何情况下都能降低运算量，而是**在特征空间的维度远大于数据集大小**时才起作用。
 
 ---
 # 感知机学习算法的对偶形式
 
 - 将$\omega$和$b$结合写成增广参数向量, $\hat{X}=(X,1)$
-$$
-\begin{aligned}
-\mathbf{\hat{\omega}} &=  (\omega_1, \omega_2, ..., \omega_n, b) \\
-&= (\sum_{i=1}^N \alpha_i y_i x_i^{(1)}, \sum_{i=1}^N \alpha_i y_i x_2^{(2)}, ..., \sum_{i=1}^N \alpha_i y_i x_i^{(n)}, \sum_{i=1}^N \alpha_i y_i) \\
-&= (\alpha_{1\times N} \otimes y_{1\times N}^T) \hat{X}_{N\times (n+1)}
-\end{aligned}
-$$
-其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的更新累积量。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f(x_i) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。
-- 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，迭代更新遇到误分类点$x_i$时，直接取对应的列$A_{.,i}$，即计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
+    $$
+    \begin{aligned}
+    \mathbf{\hat{\omega}} &=  (\omega_1, \omega_2, ..., \omega_n, b) \\
+    &= (\sum_{i=1}^N \alpha_i y_i x_i^{(1)}, \sum_{i=1}^N \alpha_i y_i x_2^{(2)}, ..., \sum_{i=1}^N \alpha_i y_i x_i^{(n)}, \sum_{i=1}^N \alpha_i y_i) \\
+    &= (\alpha_{1\times N} \otimes y_{1\times N}^T) \hat{X}_{N\times (n+1)}
+    \end{aligned}
+    $$
+    其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的更新累积量。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f(x_i) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。
+- 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，迭代更新遇到误分类点$x_i$时，直接取对应的列$A_{.,i}$，然后计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
 
 ---
 # 算法2.2 （感知机学习算法的对偶形式）
@@ -318,5 +319,5 @@ def learning_perceptron_dual_sgd(X, y, epochs=100, lr=0.03):
 - 损失函数为减少误分类点，最终训练得到的超平面可能距离某些正确分类的点非常近，预测效果并不一定好。
 ---
 # 参考
-- Rosenblatt F. The Perceptron: a probabilistic model for information storage and organization in the Brain. Cornell Aeronautical Laboratory. Psychological Review, 1958, 65 (6): 384-408.
+- Rosenblatt F. *The Perceptron: a probabilistic model for information storage and organization in the Brain. Cornell Aeronautical Laboratory*. Psychological Review, 1958, 65 (6): 384-408.
 - 李航. 《统计学习方法（第2版）》. 清华大学出版社, 2019.
