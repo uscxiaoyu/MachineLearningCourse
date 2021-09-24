@@ -6,7 +6,7 @@ headingDivider: 0
 # header: '**第3章 k-近邻法**'
 ---
 <!-- fit -->
-# 第3章 k-近邻法
+# 第3章 `k`-近邻法
 
 ---
 # 主要内容
@@ -27,18 +27,18 @@ headingDivider: 0
 ---
 # 0. 概述
 
-- k近邻法(`k-nearest neighbor, k-NN`)是一种基本分类和回归方法(`Cover & Hart, 1968`)。
+- `k`近邻法(`k-nearest neighbor, k-NN`)是一种基本分类和回归方法(`Cover & Hart, 1968`)。
 
-- k近邻法的输入为实例的特征向量，对应于特征空间的点，输出为实例的类别，可以取多类。
+- `k`近邻法的输入为实例的特征向量，对应于特征空间的点，输出为实例的类别，可以取多类。
 
-- 分类时，对新的实例，根据其k个最近邻的训练实例的类别，根据其k个最近邻的训练实例的类别，通过**多数表决等方式**进行预测。
+- 分类时，对新的实例，根据其`k`个最近邻的训练实例的类别，根据其`k`个最近邻的训练实例的类别，通过**多数表决等方式**进行预测。
 
-- k近邻法不具显式的学习过程，k值的选择、距离度量以及分类决策规则是k近邻法的三要素。难点在于如何高效地定位到输入实例的k个最近邻居。
+- `k`近邻法不具显式的学习过程，`k`值的选择、距离度量以及分类决策规则是`k`近邻法的三要素。难点在于如何高效地定位到输入实例的`k`个最近邻居。
 
 ---
 # 1. `k`近邻算法
 
-**算法3.1（k近邻法）**
+**算法3.1（` k`近邻法）**
 - 输入：训练数据集$T=\{(x_1, y_1), (x_2, y_2), ..., (x_N, y_N)\}$，其中$x_i\in\mathbf{x}\subset \mathbf{R^n}$为实例的特征向量，$y_i\in \mathbf{y}=\{c_1,c_2,...,c_K\}$为实例的类别，$i=1,2,...,N$；实例特征向量$x$；
 - 输出：实例$x$的所属类$y$
 - 算法过程
@@ -49,12 +49,11 @@ headingDivider: 0
 # 2. 距离度量
 
 - $L_p$距离
-
-设特征空间$\mathbf{X}$是n维实数向量空间$\mathbf{R^n}$，$x_i, x_j\in \mathbf{x}, x_i = (x^{(1)}_i,x^{(2)}_i,...,x^{(n)}_i)^T,x_j=(x_j^{(1)}, x_j^{(2)},... ,x_j^{(n)})^T,x_i,x_j$的$L_p$距离定义为
-$$
-L_p(x_i,x_j)=\left(\sum_{l=1}^n|x_i^{(l)}-x_j^{(l)}|^p\right)^{\frac{1}{p}}
-$$
-这里$p\ge 1$。
+    设特征空间$\mathbf{X}$是n维实数向量空间$\mathbf{R^n}$，$x_i, x_j\in \mathbf{x}, x_i = (x^{(1)}_i,x^{(2)}_i,...,x^{(n)}_i)^T,x_j=(x_j^{(1)}, x_j^{(2)},... ,x_j^{(n)})^T,x_i,x_j$的$L_p$距离定义为
+    $$
+    L_p(x_i,x_j)=\left(\sum_{l=1}^n|x_i^{(l)}-x_j^{(l)}|^p\right)^{\frac{1}{p}}
+    $$
+    这里$p\ge 1$。
 
 ---
 # 2. 距离度量
@@ -88,7 +87,7 @@ def distance(xi, xj, p=2):
         return np.sum((np.abs(xi - xj))**p)**(1/p)
 
 euclidean_dist = lambda x: distance(x[0], x[1], p=2)
-manhattan_dist = lambda x: distance(x[0], x[1], p=2)
+manhattan_dist = lambda x: distance(x[0], x[1], p=np.inf)
 
 ```
 
@@ -97,16 +96,16 @@ manhattan_dist = lambda x: distance(x[0], x[1], p=2)
 
 - 方法1：逐一计算待预测实例与训练数据集之间的特征距离，然后取距离最近的k近邻，在此基础上预测
 
-```python
-def brute_force_knn(x, X, k):
-    dist_list = []
-    for i in range(len(X)):
-        dist_list.append([distance(X[i], x), i])
+    ```python
+    def brute_force_knn(x, X, k):
+        dist_list = []
+        for i in range(len(X)):
+            dist_list.append([distance(X[i], x), i])
 
-    top_k = sorted(dist_list)[:k]
-    return top_k
-```
-> 缺点?
+        top_k = sorted(dist_list)[:k]
+        return top_k
+    ```
+    > 缺点?
 
 - 方法2：基于训练集构建一定的存储结构(如`kd tree`和`ball tree`)，然后快速确定待预测实例的k个最近邻，在此基础上进行预测
 
@@ -168,7 +167,7 @@ def brute_force_knn(x, X, k):
 # 3. `kd`树：如何表示树结构？
 
 - 方法1：基于字典
-- 方法2：构建tree类
+- 方法2：构建`tree`类
 - 方法3：基于`networkx`的[DiGraph](https://networkx.github.io/documentation/stable/reference/classes/digraph.html#networkx.DiGraph)类
 
 ---
@@ -176,39 +175,39 @@ def brute_force_knn(x, X, k):
 
 - 辅助函数`generate_node_id`：用于生成唯一的结点编号
 
-```python
-def generate_node_id(start=0, step=1):
-    '''
-    用于生成结点编号
-    '''
-    node_id = start
-    while True:
-        yield node_id
-        node_id += step
-```
+    ```python
+    def generate_node_id(start=0, step=1):
+        '''
+        用于生成结点编号
+        '''
+        node_id = start
+        while True:
+            yield node_id
+            node_id += step
+    ```
 
 ---
 # 3. `kd`树：基于递归生成`kd`树
 - 主函数`gen_kdTree_recur`: 用于生成kd树
-```python
-def gen_kdTree_recur(X, y, k, dim, node_id=0, kd_tree=nx.DiGraph()):
-    '''
-    X: ndarray, y: ndarray, k: 实例的维度, dim: 当前结点所处的维度, node_id: 当前结点的编号
-    '''
-    if node_id == 0:  # 根结点
-        kd_tree.add_node(node_id)
-    if y.size >= 2:  # 如果有两个以上的结点，继续往下分
-        x_dim = X[:, dim]  # 取当前维度数据
-        next_dim = (dim + 1) % k  # 获取下一代结点数据的切分维度
-        s_indices = np.argsort(x_dim)  # 获取按x_dim由小到大排序的各特征索引
-        m = len(s_indices) // 2  # 中间或中间靠左的索引
-        l_indices = s_indices[:m]  # 左子区域索引
-        m_idx = s_indices[m]  # 留在结点上的数据索引
-        r_indices = s_indices[m + 1:]  # 右子区域索引
-        l_X, l_y = X[l_indices], y[l_indices]
-        r_X, r_y = X[r_indices], y[r_indices]
-        ...
-```
+    ```python
+    def gen_kdTree_recur(X, y, k, dim, node_id=0, kd_tree=nx.DiGraph()):
+        '''
+        X: ndarray, y: ndarray, k: 实例的维度, dim: 当前结点所处的维度, node_id: 当前结点的编号
+        '''
+        if node_id == 0:  # 根结点
+            kd_tree.add_node(node_id)
+        if y.size >= 2:  # 如果有两个以上的结点，继续往下分
+            x_dim = X[:, dim]  # 取当前维度数据
+            next_dim = (dim + 1) % k  # 获取下一代结点数据的切分维度
+            s_indices = np.argsort(x_dim)  # 获取按x_dim由小到大排序的各特征索引
+            m = len(s_indices) // 2  # 中间或中间靠左的索引
+            l_indices = s_indices[:m]  # 左子区域索引
+            m_idx = s_indices[m]  # 留在结点上的数据索引
+            r_indices = s_indices[m + 1:]  # 右子区域索引
+            l_X, l_y = X[l_indices], y[l_indices]
+            r_X, r_y = X[r_indices], y[r_indices]
+            ...
+    ```
 
 ---
 # 3. `kd`树：基于递归生成`kd`树
@@ -240,16 +239,16 @@ def gen_kdTree_recur(X, y, k, dim, node_id=0, kd_tree=nx.DiGraph()):
 ---
 # 3. `kd`树：基于递归生成`kd`树
 - 示例:
-```python
-# 示例
-X = np.random.randint(low=0, high=100, size=(10000, 6))
-y = np.ones(X.shape[0], dtype=np.int)
-y[np.random.rand(y.size) < 0.5] = 0
-dim = 0
-nodeId_gen = generate_node_id(start=0)  # 用于生成结点编号
-root_nodeId = next(nodeId_gen)
-tree = gen_kdTree_recur(X, y, k=X.shape[1], dim=0, node_id=root_nodeId, kd_tree=nx.DiGraph())
-```
+    ```python
+    # 示例
+    X = np.random.randint(low=0, high=100, size=(10000, 6))
+    y = np.ones(X.shape[0], dtype=np.int)
+    y[np.random.rand(y.size) < 0.5] = 0
+    dim = 0
+    nodeId_gen = generate_node_id(start=0)  # 用于生成结点编号
+    root_nodeId = next(nodeId_gen)
+    tree = gen_kdTree_recur(X, y, k=X.shape[1], dim=0, node_id=root_nodeId, kd_tree=nx.DiGraph())
+    ```
 
 ---
 # 3. `kd`树：基于循环生成`kd`树
@@ -337,7 +336,7 @@ def generate_kd_tree(X, y):
 ---
 # 课堂练习1
 
-以上算法实现实践了《统计学习方法》一书中的特征维度选择办法。另一种特征维度选择办法为：计算当前节点数据集每一个特征维度的方差，选择方差最大的维度作为当前节点继续划分的维度。请完成基于该特征选择方法的`kd`树生成算法。
+- 以上算法实现实践了《统计学习方法》一书中的特征维度选择办法。另一种特征维度选择办法为：计算当前节点数据集每一个特征维度的方差，选择方差最大的维度作为当前节点继续划分的维度。请完成基于该特征选择方法的`kd`树生成算法。
 
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
@@ -352,7 +351,7 @@ def generate_kd_tree(X, y):
     - k值得增大意味着整体的模型变得简单
 
 ---
-# 4. `kd`树: 基于kd树搜索k个近邻
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
 
 ## 举例2
 - 判断是否为最近邻点
@@ -417,27 +416,27 @@ def search_kd_tree(x, node, kd_tree):
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
 - 从叶结点回退，寻找距离x最近的k个近邻
-```python
-def find_k_neighbors(x, node, k, kd_tree):
-    '''
-    从叶结点node回退
-    k_list保存离x最近的k个点
-    '''
-    k_list, trace_list = [], []
-    while node is not None:
-        # 1. 若被遍历过，则查看其父结点
-        if node in trace_list:
-            c_nodes = list(kd_tree.predecessors(node))
-            node = c_nodes[0] if c_nodes else None
-            continue
+    ```python
+    def find_k_neighbors(x, node, k, kd_tree):
+        '''
+        从叶结点node回退
+        k_list保存离x最近的k个点
+        '''
+        k_list, trace_list = [], []
+        while node is not None:
+            # 1. 若被遍历过，则查看其父结点
+            if node in trace_list:
+                c_nodes = list(kd_tree.predecessors(node))
+                node = c_nodes[0] if c_nodes else None
+                continue
 
-        trace_list.append(node)
-        dim = kd_tree.nodes[node]['dim']  # 结点的切分维度
-        node_x = kd_tree.nodes[node]['point'][0]  # 结点保存的数据特征x
-        dist_node_x = distance(x, node_x)  # x到node的距离
-        dist_div_x = np.abs(node_x[dim] - x[dim])  # x 到 node所在切割面的距离
-       ...
-```
+            trace_list.append(node)
+            dim = kd_tree.nodes[node]['dim']  # 结点的切分维度
+            node_x = kd_tree.nodes[node]['point'][0]  # 结点保存的数据特征x
+            dist_node_x = distance(x, node_x)  # x到node的距离
+            dist_div_x = np.abs(node_x[dim] - x[dim])  # x 到 node所在切割面的距离
+        ...
+    ```
 
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
@@ -473,36 +472,36 @@ def find_k_neighbors(x, node, k, kd_tree):
 - k近邻法中的分类决策规则往往是多数表决，即由输入实例的k个近邻的训练实例中的多数类决定新输入实例的类。
 
 - 多数表决规则有如下解释：如果分类的损失函数为0-1损失函数，分类函数为
-$$
-f: \mathbf{R^n} \rightarrow \{c_1,c_2,...,c_K\}
-$$
-那么误分类的概率是
-$$
-P(Y\neq f(X))=1-P(Y=f(X))
-$$
+    $$
+    f: \mathbf{R^n} \rightarrow \{c_1,c_2,...,c_K\}
+    $$
+    那么误分类的概率是
+    $$
+    P(Y\neq f(X))=1-P(Y=f(X))
+    $$
 
 ---
 # 5. `kd`树: 决策规则
 
 - 对于给定的实例$x\in \chi$，其最近邻的k个训练实例点构成集合$N_k(x)$。如果涵盖$N_k(x)$的区域的类别是$c_j$，那么误分类率是
-$$
-\frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i\neq c_j)=1-\frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i=c_j)
-$$
-要使误分类率最小即经验风险最小，就要使$\sum_{x_i\in N_k(x)}I(y_i=c_j)$最大，所以多数表决规则等价于经验风险最小化。
+    $$
+    \frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i\neq c_j)=1-\frac{1}{k}\sum_{x_i\in N_k(x)}I(y_i=c_j)
+    $$
+    要使误分类率最小即经验风险最小，就要使$\sum_{x_i\in N_k(x)}I(y_i=c_j)$最大，所以多数表决规则等价于经验风险最小化。
 
 ---
 # 5. `kd`树: 决策规则
 ![bg right:40% fit](./pictures/3.3.svg)
 - 近邻影响的加权。 在得到距离`x`的k个最近邻后，可以根据最近邻与`x`之间的距离进行加权。由于权重与距离呈反比，因此根据一定规则由距离计算出各邻居点的权重。
 - 一种方法: 使用高斯密度函数生成结点的权重
-$$
-f(x)=a\cdot e^{-\frac{(x-b)^2}{2c^2}}
-$$
-```python
-# 生成未标准化的权重
-def gaussian(dist, a=1, b=0, c=0.5):
-    return a * np.exp(-(dist - b)**2/(2*c**2))
-```
+    $$
+    f(x)=a\cdot e^{-\frac{(x-b)^2}{2c^2}}
+    $$
+    ```python
+    # 生成未标准化的权重
+    def gaussian(dist, a=1, b=0, c=0.5):
+        return a * np.exp(-(dist - b)**2/(2*c**2))
+    ```
 
 ---
 # 5. `kd`树: 决策规则
@@ -516,56 +515,55 @@ def gaussian(dist, a=1, b=0, c=0.5):
 ---
 # 5. `kd`树: 决策规则
 - 分类
-```python
-def majority_vote(x, k_list, kd_tree, weight=False):
-    y_dict = {}
-    dist_list = [k[0] for k in k_list]
-    if weight:
-        weight_list = [gaussian(x) for x in dist_list]
-        weight_list = [x/np.sum(weight_list) for x in weight_list]
-    else:
-        weight_list = np.ones_like(dist_list)
+    ```python
+    def majority_vote(x, k_list, kd_tree, weight=False):
+        y_dict = {}
+        dist_list = [k[0] for k in k_list]
+        if weight:
+            weight_list = [gaussian(x) for x in dist_list]
+            weight_list = [x/np.sum(weight_list) for x in weight_list]
+        else:
+            weight_list = np.ones_like(dist_list)
+            
+        for i, (_, node) in enumerate(k_list):
+            y = kd_tree.nodes[node]['point'][1]
+            y_dict[y] = y_dict.get(y, 0) + weight_list[i]
         
-    for i, (_, node) in enumerate(k_list):
-        y = kd_tree.nodes[node]['point'][1]
-        y_dict[y] = y_dict.get(y, 0) + weight_list[i]
-    
-    return sorted(list(y_dict.items()), key=lambda x: x[1])[-1][0]
-```
+        return sorted(list(y_dict.items()), key=lambda x: x[1])[-1][0]
+    ```
+
+---
+# 5. `kd`树: 决策规则
+- 回归
+    取`k`近邻对应y的平均值为输入实例的预测值
+    $$
+    \hat{y} = \sum_{x_i\in N_k(x)}y_i\cdot w_i
+    $$
+    其中，$w_i$为近邻i对应的标准化权重值，$y_i$为近邻i对应的标签值。
 
 ---
 # 5. `kd`树: 决策规则
 - 回归
 
-取`k`近邻对应y的平均值为输入实例的预测值
-$$
-\hat{y} = \sum_{x_i\in N_k(x)}y_i\cdot w_i
-$$
-其中，$w_i$为近邻i对应的标准化权重值，$y_i$为近邻i对应的标签值。
-
----
-# 5. `kd`树: 决策规则
-- 回归
-
-```python
-def average_k_nn(x, k_list, kd_tree, weight=False):
-    y_list = []
-    dist_list = []
-    for dist, node in k_list:
-        y = kd_tree.nodes[node]['point'][1]
-        y_list.append(y)
-        dist_list.append(dist)
-    
-    if weight:
-        weight_list = [gaussian(x) for x in dist_list]
-        weight_list = [x / np.sum(weight_list) for x in weight_list]
-    else:
-        weight_list = np.ones_like(weight_list)
+    ```python
+    def average_k_nn(x, k_list, kd_tree, weight=False):
+        y_list = []
+        dist_list = []
+        for dist, node in k_list:
+            y = kd_tree.nodes[node]['point'][1]
+            y_list.append(y)
+            dist_list.append(dist)
         
-    pred_y = np.average(y_list, weights=weight_list)
-    
-    return pred_y
-```
+        if weight:
+            weight_list = [gaussian(x) for x in dist_list]
+            weight_list = [x / np.sum(weight_list) for x in weight_list]
+        else:
+            weight_list = np.ones_like(weight_list)
+            
+        pred_y = np.average(y_list, weights=weight_list)
+        
+        return pred_y
+    ```
 
 ---
 # 6. `kd`树应用
