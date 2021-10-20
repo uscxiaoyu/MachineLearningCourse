@@ -87,7 +87,7 @@ def distance(xi, xj, p=2):
         return np.sum((np.abs(xi - xj))**p)**(1/p)
 
 euclidean_dist = lambda x: distance(x[0], x[1], p=2)
-manhattan_dist = lambda x: distance(x[0], x[1], p=np.inf)
+manhattan_dist = lambda x: distance(x[0], x[1], p=1)
 
 ```
 
@@ -124,15 +124,15 @@ manhattan_dist = lambda x: distance(x[0], x[1], p=np.inf)
 # 3. `kd`树: 构造算法
 **算法3.2（构造平衡`kd`数）**
 - 输入：k维空间数据集$T=\{(x_1, y_1), (x_2, y_2), ..., (x_N, y_N)\}$，其中$x_i = (x^{(1)}_i,x^{(2)}_i,...,x^{(n)}_i)^T,i=1,2,...,N$
-- 输出：kd平衡树
+- 输出：`kd`平衡树
 - 算法过程：
-    - 开始：构造根结点，根结点对应于包含T的k维空间的超矩形区域。选择以$x^{(1)}$为坐标轴，以T中所有实例的$x^{(1)}$坐标的*中位数*为切分点，将根结点对应的超矩形区域切分成两个子区域。切分由通过切分点并与坐标轴$x^{(1)}$垂直的超平面实现。由根结点生成深度为1的左右子结点：左子区域对应$x^{(1)}$小于切分点的子区域，右子区域对应$x^{(1)}$大于切分点的子区域。将落在切分超平面上的实例点保存在根结点。
+    - 开始：构造根结点，根结点对应于包含`T`的`k`维空间的超矩形区域。选择以$x^{(1)}$为坐标轴，以T中所有实例的$x^{(1)}$坐标的*中位数*为切分点，将根结点对应的超矩形区域切分成两个子区域。切分由通过切分点并与坐标轴$x^{(1)}$垂直的超平面实现。由根结点生成深度为1的左右子结点：左子区域对应$x^{(1)}$小于切分点的子区域，右子区域对应$x^{(1)}$大于切分点的子区域。将落在切分超平面上的实例点保存在根结点。
 
 ---
 # 3. `kd`树: 构造算法
-**算法3.2（构造平衡`kd`数）**
+**算法3.2（构造平衡`kd`树）**
 - 算法过程（续）：
-    - 重复：对深度为j的结点，选择$x^{(l)}$为切分的坐标轴，$l=(j\ \text{mod}\ k) + 1$，以该节点的区域所有实例的$x^{(1)}$坐标的中位数为切分点，将该结点对应的超矩形区域切分为两个子区域。切分由通过切分点并与坐标轴$x^{(j)}$垂直的超平面实现。由根结点生成深度为$j+1$的左右子结点：左子区域对应$x^{(l)}$小于切分点的子区域，右子区域对应$x^{(l)}$大于切分点的子区域。将落在切分超平面上的实例点保存在该结点。
+    - 重复：对深度为`j`的结点，选择$x^{(l)}$为切分的坐标轴，$l=(j\ \text{mod}\ k) + 1$，以该节点的区域所有实例的$x^{(1)}$坐标的中位数为切分点，将该结点对应的超矩形区域切分为两个子区域。切分由通过切分点并与坐标轴$x^{(j)}$垂直的超平面实现。由根结点生成深度为$j+1$的左右子结点：左子区域对应$x^{(l)}$小于切分点的子区域，右子区域对应$x^{(l)}$大于切分点的子区域。将落在切分超平面上的实例点保存在该结点。
     - 直到两个区域没有实例存在时停止。从而形成`kd`树的区域划分。
 
 ---
@@ -334,21 +334,30 @@ def generate_kd_tree(X, y):
 ```
 
 ---
+# 3. `kd`树：基于循环生成`kd`树
+
+- 注意，在以上算法实现中，并非是一个数据对应一个结点。如果在倒数第二层结点对应数据集中只包含2个数据点，则对应只有一个儿子叶结点。
+- 此时，有两种处理方式：
+  - 只生成一个儿子叶结点
+  - 生成两个儿子叶结点，其中一个保存对应数据，另一个不保存数据，回指向其父结点（或者直接复制保存父结点数据）
+- 以上处理方式均可，对应生成的`kd`树略有差异，在进行`kd`树搜索时需要考虑在内
+
+---
 # 课堂练习1
 
 - 以上算法实现实践了《统计学习方法》一书中的特征维度选择办法。另一种特征维度选择办法为：计算当前节点数据集每一个特征维度的方差，选择方差最大的维度作为当前节点继续划分的维度。请完成基于该特征选择方法的`kd`树生成算法。
 
 ---
-# 4. `kd`树: 基于kd树搜索k个近邻
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
 
 ## `k`值的选择
-- 如果选择较小的k值
+- 如果选择较小的`k`值
     - 学习的近似误差（*对训练集的预测误差*）会减小，但学习的估计误差（*对预测集的预测误差*）会增大
     - 噪声敏感
-    - k值得减小意味着整体模型变得复杂，容易发生过拟合
-- 如果选择较大的k值
+    - `k`值的减小意味着整体模型变得复杂，容易发生过拟合
+- 如果选择较大的`k`值
     - 学习的估计误差减小，但学习的近似误差会增大
-    - k值得增大意味着整体的模型变得简单
+    - k值的增大意味着整体的模型变得简单
 
 ---
 # 4. `kd`树: 基于`kd`树搜索`k`个近邻
@@ -363,40 +372,55 @@ def generate_kd_tree(X, y):
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
 
-**算法3.3 （基于kd树的k最优近邻搜索）**
+**算法3.3 （基于`kd`树的`k`最优近邻搜索）**
 
 - 输入: 已构造的`kd`树，目标点`x`，邻居数量`k`
 - 输出: x的k个最近邻`k_list`
 - 算法过程
     - (1)在`kd`树中找到包含目标点`x`的**某一**叶结点：
-        - (1.1)从根节点出发，递归地向下访问`kd`树：如果目标点x当前维的坐标小于等于切分点的坐标，则移动到左子结点；否则移动到右子结点，直到子结点为叶结点为止；
-        - (1.2)令叶结点为当前结点`node`；
-    - (2)如果`node is None`，则跳转至(3); 否则，进行以下循环
-        - (2.1)如果`node`已被访问过，则下一轮的结点为`node`的父结点`parent_node`，即`node:=parent_node`
+        - 从根节点出发，递归地向下访问`kd`树：如果目标点x当前维的坐标小于等于切分点的坐标，则移动到左子结点；否则移动到右子结点，直到子结点为叶结点为止；
+        - 令叶结点为当前结点`node`；
+
+
 ---
 # 4. `kd`树: 基于kd树搜索k个近邻
 
-**算法3.3 （基于kd树的k最优近邻搜索）**
+**算法3.3 （基于`kd`树的`k`最优近邻搜索）**
 - 算法过程
-    - (2)如果`node is None`，则跳转至(3); 否则，进行以下循环
-        - (2.2)否则，将`node`标记为已访问，然后计算`node`至`x`的距离`dist_node_x`，如果 **`k_list`的元素个数小于`k`** 或者 **`dist_node_x`小于`k_list`中的最远距离**，将`(dist_node_x, node)`添加至`k_list`，且保留距离`x`最近的`k`个距离及其结点；最后，获取下一轮需访问的结点
-            - 如果`node`为叶结点，则下一轮的结点为`node`的父结点`parent_node`，即`node:=parent_node`
+  - (2)进行以下循环
+    - (2.1)计算`node`至`x`的距离`dist_node_x`，将`node`保存至回退历史列表`trace_list`，按以下规则判断是否将`node`添加至`k_list`：
+        - 若 **`k_list`中的元素个数小于`k`** ，直接将`(dist_node_x, node)`保存至`k_list`，对`k_list`按距离从小到大排序；
+        - 否则，若 **`dist_node_x`小于`k_list`的最大距离** ，则`(dist_node_x, node)`替换`k_list`的距离最大一个点，重新对`k_list`按距离从小到大排序；
 
 ---
-# 4. `kd`树: 基于kd树搜索k个近邻
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
 
-**算法3.3 （基于kd树的k最优近邻搜索）**
+**算法3.3 （基于`kd`树的`k`最优近邻搜索）续**
 - 算法过程
-    - (2)如果`node is None`，则跳转至(3); 否则，进行以下循环
-        - (2.2)
-            - 如果`node`为非叶结点，计算x至`node`分割平面的距离`dist_div_x`
-                - 如果`dist_div_x`大于等于k_list中的最大距离，若`node`有父结点，则`node:=parent_node`；若`node`无父结点(即为跟节点)，则`node:=None`；
-                - 如果`dist_div_x`小于k_list中的最大距离，则搜索以`node`作为根结点的未被访问的另一分支，找到该分支距离`x`最近的叶结点，并将其设为`node`
-    - 返回`k_list`
+    - (2)进行以下循环
+        - (2.2)如果`node`是根结点，则终止循环，跳转至(3); 
+        - (2.3)确定下一轮要计算距离的点
+            - 获取`node`的父结点`p_node`；
+            - 如果`p_node`不属于`trace_list`，则将`p_node`添加至`trace_list`，并计算`x`到`p_node`所在切割面的距离`dist_x_div`，判断是否遍历`p_node`的另一分支:
+                
 
 ---
-# 4. `kd`树: 基于kd树搜索k个近邻
-- 返回由node作为根结点的距x最近的叶结点
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
+
+**算法3.3 （基于`kd`树的`k`最优近邻搜索）续**
+- 算法过程
+  - (2)进行以下循环
+    - (2.3)确定下一轮要计算距离的点
+      - 如果`p_node`不属于`trace_list`...
+        - 如果 **`k_list`中的元素个数小于`k`** 或者 **`dist_x_div`小于`k_list`的最大距离**，则遍历`p_node`的另一分支，得到该分支距离`x`最近的叶结点，并将其置为`node`；
+            - 否则，`node := p_node`;
+        - 否则，`node := p_node`;
+  - (3)返回`k_list`
+
+
+---
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
+- 返回由node作为根结点的距`x`最近的叶结点
 ```python
 def search_kd_tree(x, node, kd_tree):
     '''
@@ -414,62 +438,72 @@ def search_kd_tree(x, node, kd_tree):
 ```
 
 ---
-# 4. `kd`树: 基于kd树搜索k个近邻
-- 从叶结点回退，寻找距离x最近的k个近邻
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
+- 从叶结点回退，寻找距离`x`最近的`k`个近邻
     ```python
-    def find_k_neighbors(x, node, k, kd_tree):
+    def find_k_neighbors(x, k, kd_tree):
         '''
-        从叶结点node回退
-        k_list保存离x最近的k个点
-        '''
+		x: 目标点
+		k: 近邻数量
+		k_list保存离x最近的k个点, trace_list保存回退比较历史
+		'''
         k_list, trace_list = [], []
-        while node is not None:
-            # 1. 若被遍历过，则查看其父结点
-            if node in trace_list:
-                c_nodes = list(kd_tree.predecessors(node))
-                node = c_nodes[0] if c_nodes else None
-                continue
-
-            trace_list.append(node)
-            dim = kd_tree.nodes[node]['dim']  # 结点的切分维度
-            node_x = kd_tree.nodes[node]['point'][0]  # 结点保存的数据特征x
-            dist_node_x = distance(x, node_x)  # x到node的距离
-            dist_div_x = np.abs(node_x[dim] - x[dim])  # x 到 node所在切割面的距离
+		# (1) 在kd树中找到包含目标点x的某一叶结点
+		node = search_kd_tree(x, 0, kd_tree)
+		# (2) 循环
+		while True:
+			# (2.1)
+			if node not in trace_list:  # 将node添加到回退列表
+				trace_list.append(node)
         ...
     ```
 
 ---
-# 4. `kd`树: 基于kd树搜索k个近邻
-```python
-        ...
-        # 更新k_list
-        if (len(k_list) < k or dist_node_x < k_list[-1][0]) \
-            and kd_tree.nodes[node]['y'].size > 0:
-            k_list.append([dist_node_x, node])
-            k_list = sorted(k_list)[:k]
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
+- 从叶结点回退，寻找距离`x`最近的`k`个近邻（续）
+	```python
+		...
+		node_x = kd_tree.nodes[node]['point'][0]  # 结点保存的数据特征x
+		dist_node_x = distance(x, node_x)  # x到node的距离
+		if (len(k_list) < k or dist_node_x < k_list[-1][0]) //
+		and kd_tree.nodes[node]['y'].size > 0:
+			k_list.append([dist_node_x, node])
+			k_list = sorted(k_list, key=lambda x: x[0])[:k]
+		
+		# (2.2) 如果node是根结点，则终止循环
+		if kd_tree.nodes[node]['node_type'] == 'root':
+			break
+		...
+	```
 
-        # 2. 叶结点
-        if kd_tree.nodes[node]['node_type'] == 'leaf':  # 往上
-            parent_nodes = list(kd_tree.predecessors(node))  # 获取node的直接父结点
-            node = parent_nodes[0] if parent_nodes else None
-            continue
-        
-        # 3. 非叶结点
-        if dist_div_x > k_list[-1][0]:  # 往上
-            parent_nodes = list(kd_tree.predecessors(node))
-            node = parent_nodes[0] if parent_nodes else None
-        else:  # 往下
-            t_node = [i for i in kd_tree.successors(node) 
-                        if i not in trace_list][0]
-            node = search_kd_tree(x, t_node, kd_tree)
-            
-    return k_list
-```
+---
+# 4. `kd`树: 基于`kd`树搜索`k`个近邻
+- 从叶结点回退，寻找距离`x`最近的`k`个近邻（续）
+	```python
+		...
+		# (2.3) 获取下一个需要遍历的点
+		p_node = list(kd_tree.predecessors(node))[0]
+		if p_node not in trace_list:
+			trace_list.append(p_node)
+			dim = kd_tree.nodes[p_node]['dim']
+			pnode_x = kd_tree.nodes[p_node]['point'][0]
+			dist_div_x = np.abs(pnode_x[dim] - x[dim])
+			if len(k_list) < k or dist_div_x < k_list[-1][0]:
+				t_node = [i for i in kd_tree.successors(p_node) 
+				if i not in trace_list][0]
+				node = search_kd_tree(x, t_node, kd_tree)
+			else:
+				node = p_node
+		else:
+			node = p_node
+	# (3) 返回k_list
+	return k_list
+	```
 
 ---
 # 5. `kd`树: 决策规则
 
-- k近邻法中的分类决策规则往往是多数表决，即由输入实例的k个近邻的训练实例中的多数类决定新输入实例的类。
+- `k`近邻法中的分类决策规则往往是多数表决，即由输入实例的`k`个近邻的训练实例中的多数类决定新输入实例的类。
 
 - 多数表决规则有如下解释：如果分类的损失函数为0-1损失函数，分类函数为
     $$
