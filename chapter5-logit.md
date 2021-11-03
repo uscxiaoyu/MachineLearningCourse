@@ -6,7 +6,7 @@ headingDivider: 0
 # header: '**第4章 线性模型**'
 ---
 <!-- fit -->
-# 第5章 Logit模型
+# 第5章 `Logit`模型
 
 
 ---
@@ -29,7 +29,7 @@ y=\begin{cases}
 1,z>0.
 \end{cases}
 $$
-即若预测值$z$大于0则判为正例。显然，单位阶越函数是不连续函数，因此退而使用有更好性质的对数几率函数（logistic function）:
+即若预测值$z$大于0则判为正例。显然，单位阶越函数是不连续函数，因此退而使用有更好性质的对数几率函数（`logistic function`）:
 $$
 y=\frac{1}{1+e^{-z}}.
 $$
@@ -162,15 +162,9 @@ def gradident_descendent_logit(X, y, lr=0.05, bias=True):
 
 ```python
 # 小批量随机梯度下降
-def mini_batch_sgd(X, y, loss_func, bias=True, num_epochs=50, batch_size=20, lr=0.05):
+def mini_batch_sgd(X, y, loss_func, beta, bias=True, num_epochs=50, batch_size=20, lr=0.05):
     dataset = TensorDataset(X, y)
     data_iter = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
-    if bias:
-        beta = torch.randn(x_train.shape[1] + 1, 1)
-    else:
-        beta = torch.randn(x_train.shape[1], 1)
-    beta.requires_grad_()
-
     for epoch in range(num_epochs):
         for t_x, t_y in data_iter:
             l = loss_func(t_x, t_y, beta, bias=bias)        
@@ -226,14 +220,14 @@ def mini_batch_sgd(X, y, loss_func, bias=True, num_epochs=50, batch_size=20, lr=
 ## many v.s. many
 - MvM是每次将若干个类作为正类，若干个其他类作为反类。显然，OvR和OvO是MvM的特例。MvM的正、反类构造必须有特殊的设计，不能随意选取。有一种常用的MvM技术：“纠错输出吗”(`Error Correcting Output Codes, ECOC`)。
 
-- ECOC将编码的思想引入类别拆分，尽可能在解码过程中具有容错性。ECOC工作工程主要分类两步：(1) 编码： 对N个类别做M次划分，每次划分将一部分类别作为正类，一部分划分为反类，从而形成一个二分类训练集；从而产生M个训练集，训练出M个分类器; (2) 解码：M个分类器分别对测试样本进行预测，这些预测标记组成一个编码。将这个预测编码与每个类别各自的编码进行比较，返回其中距离最小的类别作为最终预测结果。
+- ECOC将编码的思想引入类别拆分，尽可能在解码过程中具有容错性。ECOC工作流程主要分类两步：(1) 编码： 对N个类别做M次划分，每次划分将一部分类别作为正类，一部分划分为反类，从而形成一个二分类训练集；从而产生M个训练集，训练出M个分类器; (2) 解码：M个分类器分别对测试样本进行预测，这些预测标记组成一个编码。将这个预测编码与每个类别各自的编码进行比较，返回其中距离最小的类别作为最终预测结果。
 
 ---
 # 4. 多分类问题
 
 ## many v.s. many
 
-- 类别划分通过“编码矩阵”（coding matrix）指定。编码矩阵有多种形式，常见的主要有二元吗(`Dietterich & Bakiri, 1995`)和三元码(`Allwein et al., 2000`)。前者将每个类别分别指定为正类和反类，后者在正、反类之外，还可指定“停用类”。
+- 类别划分通过“编码矩阵”（coding matrix）指定。编码矩阵有多种形式，常见的主要有二元码(`Dietterich & Bakiri, 1995`)和三元码(`Allwein et al., 2000`)。前者将每个类别分别指定为正类和反类，后者在正、反类之外，还可指定“停用类”。
 
 ---
 

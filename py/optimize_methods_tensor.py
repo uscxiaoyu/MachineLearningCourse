@@ -4,7 +4,7 @@ import torch
 import numpy as np
 
 
-def grad_desc(lossfunc, w, x_dict, learn_rate=0.05, max_iters=1000):
+def grad_desc(lossfunc, w, x_dict={}, learn_rate=0.05, max_iters=1000):
     """
     f: 待优化目标函数, grad_f: f的梯度, w: 参数初值, x_dict:固定参数值, learn_rate: 学习率
     """
@@ -29,7 +29,7 @@ def grad_desc(lossfunc, w, x_dict, learn_rate=0.05, max_iters=1000):
     return trace_w
 
 
-def grad_desc_with_momentum(lossfunc, w, x_dict, beta=0.5, learn_rate=0.05, max_iter=1000):
+def grad_desc_with_momentum(lossfunc, w, x_dict={}, beta=0.5, learn_rate=0.05, max_iter=1000):
     trace_w = w.clone().data.reshape(1, -1)
     v_0 = 0
     i = 1
@@ -55,7 +55,7 @@ def grad_desc_with_momentum(lossfunc, w, x_dict, beta=0.5, learn_rate=0.05, max_
     return trace_w
 
 
-def adaptive_momentum(lossfunc, w, x_dict, beta1=0.5, beta2=0.9, learn_rate=0.999, max_iter=1000, epsilon=1e-8):
+def adaptive_momentum(lossfunc, w, x_dict={}, beta1=0.5, beta2=0.9, learn_rate=0.999, max_iter=1000, epsilon=1e-8):
     trace_w = w.clone().data.reshape(1, -1)
     v_0, s_0 = 0, 0
     i = 1
@@ -83,10 +83,16 @@ def adaptive_momentum(lossfunc, w, x_dict, beta1=0.5, beta2=0.9, learn_rate=0.99
 
 
 if __name__ == "__main__":
+    def f(x):
+        """
+        函数: f(x0, x1) = x0**2 + x1**2
+        """
+        return x[0] ** 2 + 2 * x[1] ** 2  # objective
+        
 
-    # res = grad_desc(f, grad_f, x0=np.array([3, 3]), learn_rate=0.2)
-    res = grad_desc_with_momentum(f, grad_f, x0=np.array([3, 3]), beta=0.5, learn_rate=0.2)
-    # res = adaptive_momentum(f, grad_f, x0=np.array([3, 3]), beta1=0.5, beta2=0.5, learn_rate=0.2)
+    # res = grad_desc(f, w=torch.tensor([3.0, 3.0], requires_grad=True), learn_rate=0.2)
+    # res = grad_desc_with_momentum(f, w=torch.tensor([3.0, 3.0], requires_grad=True), x_dict={}, beta=0.5, learn_rate=0.2)
+    res = adaptive_momentum(f, w=torch.tensor([3.0, 3.0], requires_grad=True), beta1=0.5, beta2=0.5, learn_rate=0.2)
 
     # 绘制动画
     a0, a1 = res[:, 0].tolist(), res[:, 1].tolist()

@@ -86,8 +86,8 @@ if __name__ == "__main__":
         return np.array([2 * x[0], 4 * x[1]])  # gradient
 
     # res = gd_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.2)
-    res = gd_momen_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.05)
-    # res = adam_numpy(f, grad_f, x0=np.array([3, 3]), beta1=0.6, beta2=0.8, learn_rate=0.05)
+    # res = gd_momen_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.05)
+    res = adam_numpy(f, grad_f, x0=np.array([3, 3]), beta1=0.6, beta2=0.8, learn_rate=0.05)
 
     # 绘制动画
     a0, a1 = res[:, 0].tolist(), res[:, 1].tolist()
