@@ -32,15 +32,15 @@ headingDivider: 0
 ---
 # 导言
 
-## 人工神经网络（Artificial Neural Network，ANN）是指一系列受生物学和神经科学启发的数学模型。
->这些模型主要是通过对人脑的神经元网络进行抽象，构建人工神经元，并按照一定拓扑结构来建立人工神经元之间的连接，来模拟生物神经网络．在人工智能领域，人工神经网络也常常简称为神经网络（NeuralNetwork，NN）或神经模型（Neural Model）．
+## 人工神经网络（`Artificial Neural Network，ANN`）是指一系列受生物学和神经科学启发的数学模型。
+>这些模型主要是通过对人脑的神经元网络进行抽象，构建人工神经元，并按照一定拓扑结构来建立人工神经元之间的连接，来模拟生物神经网络．在人工智能领域，人工神经网络也常常简称为神经网络（`NeuralNetwork，NN`）或神经模型（`Neural Model`）．
 
 
 ---
 # 导言
 
 ## 神经网络最早是作为一种主要的连接主义模型。
-> 20 世纪80 年代中后期，最 流行的一种连接主义模型是分布式并行处理（Parallel Distributed Processing，PDP）模型[McClelland et al., 1986]，其有3 个主要特性：1）信息表示是分布式的（非局部的）；2）记忆和知识是存储在单元之间的连接上；3）通过逐渐改变单元之间的连接强度来学习新的知识.
+> 20 世纪80 年代中后期，最流行的一种连接主义模型是分布式并行处理（Parallel Distributed Processing，PDP）模型[McClelland et al., 1986]，其有3 个主要特性：1）信息表示是分布式的（非局部的）；2）记忆和知识是存储在单元之间的连接上；3）通过逐渐改变单元之间的连接强度来学习新的知识.
 
 
 ---
@@ -125,7 +125,7 @@ headingDivider: 0
 
 - 前馈网络包括**全连接前馈网络**和**卷积神经网络**等．
 
-- 前馈网络可以看作一个函数，通过简单非线性函数的多次复合，实现输入空间到输出空间的复杂映射．
+- 前馈网络可以看作一个**函数**，通过简单非线性函数的多次复合，实现输入空间到输出空间的复杂映射．
 
 - 这种网络结构简单，易于实现．
 
@@ -134,13 +134,13 @@ headingDivider: 0
 # 神经网络的结构: 记忆神经网络
 
 
-- 记忆网络，也称为反馈网络，网络中的神经元不但可以接收其他神经元的信息，也可以接收自己的历史信息．
+- 记忆网络，也称为反馈网络，网络中的神经元不但可以接收其他神经元的信息，也可以接收自己的**历史信息**．
 
 - 和前馈网络相比，记忆网络中的神经元具有记忆功能，在不同的时刻具有不同的状态．记忆神经网络中的信息传播可以是单向或双向传递，因此可用一个有向循环图或无向图来表示．
 
 - 记忆网络包括**循环神经网络、Hopfield 网络、玻尔兹曼机、受限玻尔兹曼机**等．
 
-- 记忆网络可以看作一个程序，具有更强的计算和记忆能力．
+- 记忆网络可以看作一个**程序**，具有更强的计算和记忆能力．
 
 - 为了增强记忆网络的记忆容量，可以引入外部记忆单元和读写机制，用来保存一些网络的中间状态，称为**记忆增强神经网络（Memory Augmented Neural Network，MANN）**，比如神经图灵机[Graves et al., 2014] 和记忆网络[Sukhbaatar et al., 2015] 等．
 
@@ -215,7 +215,7 @@ $$
 
 - 从联立后的式子可以看出，虽然神经网络引入了隐藏层，却依然等价于一个单层神经网络：其中输出层权重参数为$\boldsymbol{W}_h\boldsymbol{W}_o$，偏差参数为$\boldsymbol{b}_h \boldsymbol{W}_o + \boldsymbol{b}_o$。
 
-**不难发现，即便再添加更多的隐藏层，以上设计依然只能与仅含输出层的单层神经网络等价。**
+    **不难发现，即便再添加更多的隐藏层，以上设计依然只能与仅含输出层的单层神经网络等价。**
 
 
 ---
@@ -513,7 +513,7 @@ def load_minibatch_data(batch_size, kind='train', is_one_hot=False, is_mnist=Fal
         c_path = path + 'fashion_mnist/'
     features, labels = load_mnist(c_path, kind=kind)
     if is_one_hot:
-        hot_labels = torch.zeros(features.shape[0], 10)
+        hot_labels = torch.zeros(features.shape[0], 10)  # 一共有10类图片
         x_indices = np.arange(features.shape[0]).tolist()
         y_indices = labels.byte().tolist()
         hot_labels[x_indices, y_indices] = 1
@@ -544,7 +544,7 @@ def accuracy(y, hat_y, is_one_hot=False):
 
 ---
 # 基于MLP预测图片类别
-- 方法1
+- 方法1： 构建mlp函数
 ```python
 batch_size = 256
 train_iter = load_minibatch_data(batch_size, is_one_hot=True)
@@ -562,12 +562,12 @@ for param in params:
 layers = [
     (W1, b1, torch.relu),
     (W2, b2, torch.softmax)
-]
+]  # 分别对应输入层和隐藏层
 ```
 
 ---
 # 基于MLP预测图片类别
-- 方法1: 自己构建mlp函数
+- 方法1: 构建mlp函数
 ```python
 num_epoch = 20
 lr = 0.1
@@ -586,7 +586,7 @@ for epoch in range(num_epoch):
 
 ---
 # 基于MLP预测图片类别
-- 方法1；自己构建mlp函数
+- 方法1: 构建mlp函数
 ```python
 train_features, train_labels = load_mnist(path="../dataset/fashion_mnist", kind='train')
 test_features, test_labels = load_mnist(path="../dataset/fashion_mnist", kind='t10k')
