@@ -25,7 +25,7 @@ headingDivider: 0
 
 - 上一节我们看到了神经⽹络如何使⽤梯度下降算法来学习他们⾃⾝的权重和偏置。但是，这⾥还留下了⼀个问题：我们并没有讨论如何计算代价函数的梯度。这是很⼤的缺失！我们接下来学习计算这些梯度的快速算法，也就是反向传播（`backpropagation`）。
 
-- 反向传播算法最初在1970 年代被提及，但是⼈们直到`David Rumelhart、Geoffrey Hinton 和Ronald Williams` 的著名的1986 年的论⽂中才认识到这个算法的重要性。这篇论⽂描述了对⼀些神经⽹络反向传播要⽐传统的⽅法更快，这使得使⽤神经⽹络来解决之前⽆法完成的问题变得可⾏。
+- 反向传播算法最初在1970 年代被提及，但是⼈们直到`David Rumelhart、Geoffrey Hinton 和Ronald Williams` 的著名的1986年论⽂中才认识到这个算法的重要性。这篇论⽂描述了对⼀些神经⽹络反向传播要⽐传统的⽅法更快，这使得使⽤神经⽹络来解决之前⽆法完成的问题变得可⾏。
 
 - 现在，反向传播算法已经是神经⽹络学习的重要组成部分了。
 
@@ -202,7 +202,7 @@ a_1^L(1-a_1^L) & -a_1^La_2^L & ... & -a_1^La_j^L & ... & -a_1^La_{M_L}^L \\
 &= (\frac{\partial{a^L}}{\partial{z^L_1}}, \frac{\partial{a^L}}{\partial{z^L_2}}, ..., \frac{\partial{a^L}}{\partial{z^L_{M_L}}})
 \end{aligned}
 $$
-> 若$i = j$, 则有$\frac{\partial \mathrm{softmax}(x_i)}{\partial x_j}=\mathrm{softmax}(x_i)(1-\mathrm{softmax}(x_i))$; 否则, $\frac{\partial \mathrm{softmax}(x_i)}{\partial x_j}=-\mathrm{softmax}(x_i)\mathrm{softmax}(x_i)$
+> 若$i = j$, 则有$\frac{\partial \mathrm{softmax}(x_i)}{\partial x_j}=\mathrm{softmax}(x_i)(1-\mathrm{softmax}(x_i))$; 否则, $\frac{\partial \mathrm{softmax}(x_i)}{\partial x_j}=-\mathrm{softmax}(x_i)\mathrm{softmax}(x_j)$
 
 
 ---
