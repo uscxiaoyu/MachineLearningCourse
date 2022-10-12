@@ -268,7 +268,7 @@ $$
     \begin{aligned}
     \mathbf{\hat{\omega}} &=  (\omega_1, \omega_2, ..., \omega_n, b) \\
     &= (\sum_{i=1}^N \alpha_i y_i x_i^{(1)}, \sum_{i=1}^N \alpha_i y_i x_2^{(2)}, ..., \sum_{i=1}^N \alpha_i y_i x_i^{(n)}, \sum_{i=1}^N \alpha_i y_i) \\
-    &= (\alpha_{1\times N} \otimes y_{1\times N}^T) \hat{X}_{N\times (n+1)}
+    &= (\alpha_{1\times N} \odot y_{1\times N}^T) \hat{X}_{N\times (n+1)}
     \end{aligned}
     $$
     其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的累积更新次数。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f( \mathbf{x_i}) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。

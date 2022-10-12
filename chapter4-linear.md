@@ -198,7 +198,7 @@ def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.
 # 1.线性回归模型
 ## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
 
-- `L2: Ridge resgression`
+- `L2: Ridge regression`
     $$
     \min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T+\frac{1}{2}\lambda ww^T
     $$
