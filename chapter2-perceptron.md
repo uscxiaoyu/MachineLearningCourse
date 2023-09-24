@@ -23,7 +23,7 @@ header: '**第2章 感知机**'
 ---
 # 概述
 - 1957年由`Rosenblatt`提出，是**神经网络**与**支持向量机**的基础。
-- 输入为实例的特征向量，输出为实例的类别，正例取+1，反例取-1；
+- 输入为实例的特征向量，输出为实例的类别，正例取$+1$，反例取$-1$；
 - 感知机对应于输入空间中将实例划分为正负两类的分离超平面，属于判别模型；
 - 导入基于误分类的损失函数；
 - 利用梯度下降法对损失函数进行极小化；
@@ -35,7 +35,7 @@ header: '**第2章 感知机**'
 $$
 f(x)=\mathrm{sign} (\omega\cdot x+b)
 $$
-称为感知机。其中，$\omega$和$b$为感知机模型参数，$\omega\in\mathbb{R^n}$为权重值或者权值向量，$b\in\mathbb{R}$称为偏置。$sign$是符号函数，即
+称为感知机。其中，$\omega$和$b$为感知机模型参数，$\omega\in\mathbb{R^n}$为权重值或者权值向量，$b\in\mathbb{R}$称为偏置。$\mathrm{sign}$是符号函数，即
 $$
 \mathrm{sign}(x)=\begin{cases}
 +1,x\geq 0 \\
@@ -180,7 +180,7 @@ def grad_desc(f, grad_f, x0, learn_rate=0.05):
 - 输出：$\omega,b$, 感知机模型$f(x)=\mathrm{sign}(\omega\cdot x+b)$
 - 算法过程：
   (1) 选取初值$\omega_0, b_0$;
-  (2) 对于$i\in T$，根据$y_i(\omega\cdot x_i+b)\leq 0$获取误分类点集合M，如果$M=\emptyset$，则结束算法；
+  (2) 对于$i\in T$，根据$y_i(\omega\cdot x_i+b)\leq 0$获取误分类点集合$M$，如果$M=\emptyset$，则结束算法；
   (3) 在$M$中随机选取一个数据点$(x_i, y_i)$;
   (4) 更新参数：$\omega := \omega + \eta y_i x_i, b := b + \eta y_i$；
   (5) 转至步骤（2）

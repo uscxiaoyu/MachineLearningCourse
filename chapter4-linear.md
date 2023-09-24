@@ -30,7 +30,7 @@ headingDivider: 0
 # 0.概述
 ## 模型的基本形式
 
-- 给定由d个属性描述的示例$\mathbf{x}=(x_1;x_2;...;x_d)$，其中$x_i$是$x$在第i个属性上的取值，线性模型试图学得通过属性的线性组合来进行预测的函数，即
+- 给定由$d$个属性描述的示例$\mathbf{x}=(x_1;x_2;...;x_d)$，其中$x_i$是$x$在第$i$个属性上的取值，线性模型试图学得通过属性的线性组合来进行预测的函数，即
     $$f(\mathbf{x})=\omega_1x_1 + \omega_2x_2+...+\omega_dx_d+b,$$
 - 一般用向量形式写出
     $$f(\mathbf{x})=\mathbf{\omega^Tx}+b,$$
@@ -38,13 +38,13 @@ headingDivider: 0
 
 ---
 # 1.线性回归模型
-`Galton(1886)`发现了父亲身高与儿子身高存在着某种给定的关系：子辈的平均身高是其父辈平均身高以及他们所处族群平均身高的加权平均和。这种“回归”现象称为：均值回归或者平庸回归（`reversion to the mean/reversion to mediocrity`）。因此，哪怕单看一组父亲和孩子的身高，两个人的身高可能差异很大，但是从整个人群上来看，父亲和孩子的身高分布应该是很相近的。
+`Galton(1886)`发现了父亲身高与儿子身高存在着某种给定的关系：子辈的平均身高是其父辈平均身高以及他们所处族群平均身高的加权平均和。这种**回归**现象称为：均值回归或者平庸回归（`reversion to the mean/reversion to mediocrity`）。因此，哪怕单看一组父亲和孩子的身高，两个人的身高可能差异很大，但是从整个人群上来看，父亲和孩子的身高分布应该是很相近的。
 
 此外，这里所说的线性回归是指$f(x)$相对于系数$\omega, b$为线性，变量$X_j$ 可以是
 - 数值变量
-- 数值变量的转换，如log
+- 数值变量的转换，如`log`
 - 数值变量的基扩展，例如$X_2=X_1^2,X_3=\sin(X_1)$
-- 分组变量，用one-hot向量表示分组
+- 分组变量，用`one-hot`向量表示分组
 
 
 
@@ -58,7 +58,7 @@ headingDivider: 0
 # 1.线性回归模型
 - 给定数据集$D=\{(\mathbf{x_1},y_1),(\mathbf{x_2},y_2),...,(\mathbf{x_m},y_m)\}$，其中$\mathbf{x_i}=(x_{i1};x_{i2};...;x_{id}),y_i\in R$. 线性回归试图学得一个线性模型以尽可能准确地预测实数值输出标记. 我们试图学得
     $$f(\mathbf{x_i})=\mathbf{x_i}+b,使得f(x_i)\simeq y_i,$$
-    这称为 **多元线性回归(multivariate linear regression)** .
+    这称为 **多元线性回归(`multivariate linear regression`)** .
 
 - 可以利用最小二乘法对$\mathbf{\omega}$和b进行估计。假定增广参数向量$\mathbf{\hat \omega}=(\mathbf{\omega};b)$，相应地
     $$
@@ -97,7 +97,7 @@ $$
 \cfrac{\partial E_{\hat{w}}}{\partial \hat{w}}=2\mathbf{X}^T(\mathbf{X}\hat{w}-\mathbf{y}).
 $$
 
-- 令上式为0可得$\mathbf{\hat\omega}$最优解的封闭解。
+- 令上式为`0`可得$\mathbf{\hat\omega}$最优解的封闭解。
 
 ---
 # 1.线性回归模型
@@ -121,12 +121,12 @@ $$
 # 1.线性回归模型
 - 当$\mathbf{X^T X}$为满秩矩阵或正定矩阵时，令$\cfrac{\partial E_{\hat{w}}}{\partial \hat{w}}=0$可得
 $$
-\mathbf{\hat\omega^*=(X^TX)^{-1}X^Ty},
+\mathbf{\hat\omega^*=(X^T X)^{-1}X^T y},
 $$
 
-其中$\mathbf{(X^TX)^{-1}}$是$\mathbf{X^TX}$的逆矩阵。令$\mathbf{\hat x_i} = (\mathbf{x_i}; 1)$，则最终学得的线性回归模型为
+其中$\mathbf{(X^T X)^{-1}}$是$\mathbf{X^T X}$的逆矩阵。令$\mathbf{\hat x_i} = (\mathbf{x_i}; 1)$，则最终学得的线性回归模型为
 $$
-f(\mathrm{\hat x_i})=\mathbf{\hat x_i^T(X^TX)^{-1}X^Ty}.
+f(\mathrm{\hat x_i})=\mathbf{\hat x_i^T(X^T X)^{-1}X^T y}.
 $$
 
 - 然而，现实任务中$\mathbf{X^T X}$往往不是满秩矩阵，而且随着数据量的增加，计算量呈现大幅增长。因此，往往求助于数值优化算法（如梯度下降）迭代求解。
