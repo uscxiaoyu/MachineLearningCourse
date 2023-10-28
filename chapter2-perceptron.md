@@ -23,7 +23,7 @@ header: '**第2章 感知机**'
 ---
 # 概述
 - 1957年由`Rosenblatt`提出，是**神经网络**与**支持向量机**的基础。
-- 输入为实例的特征向量，输出为实例的类别，正例取+1，反例取-1；
+- 输入为实例的特征向量，输出为实例的类别，正例取$+1$，反例取$-1$；
 - 感知机对应于输入空间中将实例划分为正负两类的分离超平面，属于判别模型；
 - 导入基于误分类的损失函数；
 - 利用梯度下降法对损失函数进行极小化；
@@ -35,7 +35,7 @@ header: '**第2章 感知机**'
 $$
 f(x)=\mathrm{sign} (\omega\cdot x+b)
 $$
-称为感知机。其中，$\omega$和$b$为感知机模型参数，$\omega\in\mathbb{R^n}$为权重值或者权值向量，$b\in\mathbb{R}$称为偏置。$sign$是符号函数，即
+称为感知机。其中，$\omega$和$b$为感知机模型参数，$\omega\in\mathbb{R^n}$为权重值或者权值向量，$b\in\mathbb{R}$称为偏置。$\mathrm{sign}$是符号函数，即
 $$
 \mathrm{sign}(x)=\begin{cases}
 +1,x\geq 0 \\
@@ -58,7 +58,7 @@ def percetron(w, X, b):
     X: 矩阵 m, n
     b: 偏置，标量
     '''
-    z = X@w + b
+    z = X@w + b  # m*1 纬向量
     y = torch.ones_like(z)
     y[torch.lt(z, 0)] = -1  # 小于0的值为-1，大于等于0的值为1
     return y
@@ -132,6 +132,7 @@ $$
 
 - 感知机是误分类驱动的，具体可采用多种方法，如**梯度下降、随机梯度下降**等。
 - 假设误分类集合$M$是固定的，那么损失函数$L(\omega, b)$的梯度由$\bigtriangledown_{\omega}=-\sum_{i\in M}y_ix_i,\bigtriangledown_{b}=-\sum_{i\in M}y_i$给出。
+    > 注意： $x_i$是和$\omega$具有相同纬度的特征，$-\sum_{i\in M}y_ix_i$在各对应维度上求和。
 - 随机选取一个误分类点$(x_i,y_i)\in M$，对$\omega, b$进行更新：$\omega := \omega + \eta y_i x_i,b := b + \eta y_i$，其中$0<\eta\leq 1$是步长，也称为学习率。
 - 通过迭代可以减少损失函数$L(\omega, b)$的值，直到$L$为0.
 
@@ -141,11 +142,11 @@ $$
 
 $$\nabla f(\mathbf{x}) = \bigg[\frac{\partial f(\mathbf{x})}{\partial x_1}, \frac{\partial f(\mathbf{x})}{\partial x_2}, \ldots, \frac{\partial f(\mathbf{x})}{\partial x_d}\bigg]^\top.$$
 
-利用泰勒展开式可得：$f(\mathbf{x} + \mathbf{\epsilon}) = f(\mathbf{x}) + \Delta\mathbf{x}^\top \nabla f(\mathbf{x}) + O(|\mathbf{\Delta x}|^2).$
+利用泰勒展开式可得：$f(\mathbf{x} + \Delta\mathbf{x}) = f(\mathbf{x}) + \Delta\mathbf{x}^\top \nabla f(\mathbf{x}) + O(|\mathbf{\Delta x}|^2).$
 
 换而言之，最速下降方向由$-\nabla f(\mathbf{x})$给出。令$\Delta \mathbf{x}=-\eta \nabla f(\mathbf{x})$，则有
 
-$$f(\mathbf{x} + \Delta \mathbf{x}) = f(\mathbf{x}) - \eta \nabla f(\mathbf{x})^T \nabla f(\mathbf{x}) + O(|\mathbf{\epsilon}|^2).$$
+$$f(\mathbf{x} + \Delta \mathbf{x}) = f(\mathbf{x}) - \eta \nabla f(\mathbf{x})^T \nabla f(\mathbf{x}) + O(|\Delta\mathbf{x}|^2).$$
 
 选定合适的学习率$\eta > 0$，则可得梯度下降更新公式
 $$\mathbf{x} \leftarrow \mathbf{x} - \eta \nabla f(\mathbf{x}).$$
@@ -179,10 +180,10 @@ def grad_desc(f, grad_f, x0, learn_rate=0.05):
 - 输出：$\omega,b$, 感知机模型$f(x)=\mathrm{sign}(\omega\cdot x+b)$
 - 算法过程：
   (1) 选取初值$\omega_0, b_0$;
-  (2) 对于$i\in T$，根据$y_i(\omega\cdot x_i+b)\leq 0$获取误分类点集合M
-  (3) 在M中随机选取数据$(x_i, y_i)$;
-  (4) 如果$(y_i(\omega\cdot x_i+b))\leq 0$, 则$\omega := \omega + \eta y_i x_i, b := b + \eta y_i$
-  (5) 若$M=\emptyset$，则结束算法；否则，转至(2)
+  (2) 对于$i\in T$，根据$y_i(\omega\cdot x_i+b)\leq 0$获取误分类点集合$M$，如果$M=\emptyset$，则结束算法；
+  (3) 在$M$中随机选取一个数据点$(x_i, y_i)$;
+  (4) 更新参数：$\omega := \omega + \eta y_i x_i, b := b + \eta y_i$；
+  (5) 转至步骤（2）
 
 ---
 ```python
@@ -240,7 +241,7 @@ def learn_model(lossfunc, X, y, epochs=50, lr=0.03):
 # 算法收敛性
 **定理2.1 (`Novikoff`)** 设训练集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$是线性可分的，其中$x_i\in\chi=\mathbb{R^n}, y_i\in\mathbf{Y}=\{-1,+1\}, i=1,2,...,N$，则
 - 存在满足条件$||\hat{\omega}_{opt}||=1$的超平面$\hat{\omega}_{opt}\cdot \hat{x}+b_{opt}=0$将训练集完全正确分开；且存在$\gamma > 0$，对于所有的$i=1,2,...,N$有 $y_i(\hat{\omega}_{opt}\cdot x_i+b_{opt})\geq \gamma$
-- 令$R= \max_{\leq i \leq N}||\hat{x_i}||$，则感知机算法`2.1`在训练集上的误分类次数k满足不等式
+- 令$R= \max_{1 \leq i \leq N}||\hat{x_i}||$，则感知机算法`2.1`在训练集上的误分类次数k满足
 $$
 k\leq \left(\frac{R}{\gamma}\right)^2
 $$
@@ -252,7 +253,7 @@ $$
 
 - 对偶形式的基本想法: 将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。
 - 假定初始值$\omega_0,b_0$均为0，更新后通过$\omega:=\omega+\eta y_i x_i, b:=b+\eta y_i$ 给出
-- 逐步修改$\omega, b$，经过$n$次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$,最后学习到的$\omega, b$可以分别表示为
+- 逐步修改$\omega, b$，经过$n$次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$，最后学习到的$\omega, b$可以分别表示为
 $$
 \omega=\sum_{i=1}^N\alpha_iy_ix_i, b=\sum_{i=1}^N\alpha_iy_i
 $$
@@ -262,16 +263,16 @@ $$
 ---
 # 感知机学习算法的对偶形式
 
-- 将$\omega$和$b$结合写成增广参数向量, $\hat{X}=(X,1)$
+- 将$\omega$和$b$结合写成增广参数向量, 特征和偏置对应写成$\hat{X}=(X,1)$
     $$
     \begin{aligned}
     \mathbf{\hat{\omega}} &=  (\omega_1, \omega_2, ..., \omega_n, b) \\
     &= (\sum_{i=1}^N \alpha_i y_i x_i^{(1)}, \sum_{i=1}^N \alpha_i y_i x_2^{(2)}, ..., \sum_{i=1}^N \alpha_i y_i x_i^{(n)}, \sum_{i=1}^N \alpha_i y_i) \\
-    &= (\alpha_{1\times N} \otimes y_{1\times N}^T) \hat{X}_{N\times (n+1)}
+    &= (\alpha_{1\times N} \odot y_{1\times N}^T) \hat{X}_{N\times (n+1)}
     \end{aligned}
     $$
-    其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的更新累积量。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f(x_i) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。
-- 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，迭代更新遇到误分类点$x_i$时，直接取对应的列$A_{.,i}$，然后计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
+    其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的累积更新次数。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f( \mathbf{x_i}) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。
+
 
 ---
 # 算法2.2 （感知机学习算法的对偶形式）
@@ -282,7 +283,7 @@ $$
   (2) 根据$y_i\left(\sum_{j=1}^N\alpha_j y_j x_j\cdot x_i+b\right)\leq 0$随机选取一个误分类数据$(x_i,y_i)$;
   (3) 执行更新$\alpha_i:=\alpha_i+\eta,b:=b+\eta y_i$;
   (4) 转至(2)直到没有误分类点
-
+> 技巧: 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，对于误分类点$x_i$时，直接取对应的列$A_{.,i}$，从而可计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
 ---
 
 ```python

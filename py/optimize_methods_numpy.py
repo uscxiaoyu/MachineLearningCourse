@@ -55,7 +55,7 @@ def adam_numpy(f, grad_f, x0, beta1=0.9, beta2=0.999, learn_rate=0.05, max_iter=
     while i <= max_iter:
         grad = grad_f(x)
         m_1 = (beta1 * m_0 + (1 - beta1) * grad) / (1 - beta1 ** i)
-        v_1 = (beta2 * v_0 + (1 - beta2) * grad ** 2) / (1 - beta1 ** i)
+        v_1 = (beta2 * v_0 + (1 - beta2) * grad ** 2) / (1 - beta2 ** i)
         x = x - learn_rate * m_1 / (np.sqrt(v_1) + epsilon)
         trace_x = np.concatenate([trace_x, x.reshape(1, -1)])
         if i % 5 == 0:
@@ -86,8 +86,8 @@ if __name__ == "__main__":
         return np.array([2 * x[0], 4 * x[1]])  # gradient
 
     # res = gd_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.2)
-    # res = gd_momen_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.05)
-    res = adam_numpy(f, grad_f, x0=np.array([3, 3]), beta1=0.6, beta2=0.8, learn_rate=0.05)
+    res = gd_momen_numpy(f, grad_f, x0=np.array([3, 3]), learn_rate=0.05)
+    # res = adam_numpy(f, grad_f, x0=np.array([3, 3]), beta1=0.6, beta2=0.8, learn_rate=0.05)
 
     # 绘制动画
     a0, a1 = res[:, 0].tolist(), res[:, 1].tolist()

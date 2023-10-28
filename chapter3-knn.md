@@ -83,8 +83,8 @@ import time
 def distance(xi, xj, p=2):
     if np.isinf(p):
         return np.max(np.abs(xi - xj))
-    else:
-        return np.sum((np.abs(xi - xj))**p)**(1/p)
+        
+    return np.sum((np.abs(xi - xj))**p)**(1/p)
 
 euclidean_dist = lambda x: distance(x[0], x[1], p=2)
 manhattan_dist = lambda x: distance(x[0], x[1], p=1)
@@ -617,14 +617,4 @@ def search_kd_tree(x, node, kd_tree):
     - 计算复杂度高
     - 空间复杂度高
 
----
-# 作业1
 
-除以`kd`树存储训练实例外，`knn`也可采用`Ball tree`存储训练实例。请参照`kd`树的实现，基于`python`实现`Ball tree`的生成算法和搜索算法。以下是`Ball tree`的一种实现方法：
-
-> 将所有样本放到一个超球体里，找到其中一个样本作为球心$x_0$，使得所有其它样本到它的最大距离最短。然后，找到一个离 $x_0$最远的点$x_1$，再找到离$x_1$最远的点为$x_2$，把球体内所有样本分按就近原则分别分配给$x_1$或$x_2$，重新调整两个球的球心，在此基础上构建两个子球体。递归下去，直到最终球中只包含一个样本，就不再切割。
-
----
-![bg right:50% fit](./pictures/3.4.jpg)
-
-> Omohundro, S.M. Five Balltree Construction Algorithms[J]. International Computer Science Institute Technical Report (1989).
