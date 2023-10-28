@@ -6,7 +6,7 @@ headingDivider: 0
 header: '**第2章 感知机**'
 ---
 <!-- fit -->
-# 第2章 感知机
+# 第2讲 感知机
 
 ---
 # 主要内容
@@ -252,7 +252,7 @@ $$
 # 感知机学习算法的对偶形式
 
 - 对偶形式的基本想法: 将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。
-- 假定初始值$\omega_0,b_0$均为0，更新后通过$\omega:=\omega+\eta y_i x_i, b:=b+\eta y_i$ 给出
+- 假定**初始值$\omega_0,b_0$均为0**，更新后通过$\omega:=\omega+\eta y_i x_i, b:=b+\eta y_i$ 给出
 - 逐步修改$\omega, b$，经过$n$次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$，最后学习到的$\omega, b$可以分别表示为
 $$
 \omega=\sum_{i=1}^N\alpha_iy_ix_i, b=\sum_{i=1}^N\alpha_iy_i
@@ -271,19 +271,20 @@ $$
     &= (\alpha_{1\times N} \odot y_{1\times N}^T) \hat{X}_{N\times (n+1)}
     \end{aligned}
     $$
-    其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的累积更新次数。例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f( \mathbf{x_i}) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。
+    其中$\mathbf{\alpha}=(\alpha_1, \alpha_2, ..., \alpha_N)$是针对各数据点的累积更新次数。
+>例如，如果针对点0更新了4次，则对应有$\alpha_0=4\eta$，$\eta$为学习率。感知机为$f( \mathbf{x_i}) = \mathbf{\hat{\omega}\hat{x_i}^T}$，其中$\mathbf{\hat{x_i}}=(x_i^{(1)}, x_i^{(2)}, ..., x_i^{(n)}, 1)$。
 
 
 ---
 # 算法2.2 （感知机学习算法的对偶形式）
-- 输入：训练数据集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$，其中$x_i\in \mathbf{X=R^n}, y_i\in Y=\{-1, +1\}, i=1,2,...,N$; 学习率$\eta(0<\eta\leq 1)$；
+- 输入：训练数据集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$，其中$x_i\in \mathbf{X=R^n}, y_i\in Y=\{-1, +1\}, i=1,2,...,N$; 学习率$\eta(0<\eta\leq 1)$
 - 输出：$\mathbf{\alpha},b$，其中$\mathbf{\alpha}=(\alpha_1,\alpha_2,...,\alpha_N)^T$为各数据点更新的次数; 感知机模型$f(x)=\mathrm{sign}(\sum_{j=1}^N \alpha_jy_j\cdot \mathbf{x} +b)$
 - 算法过程：
   (1) 更新$\alpha := (0, 0, ..., 0)^T, b:= 0$;
   (2) 根据$y_i\left(\sum_{j=1}^N\alpha_j y_j x_j\cdot x_i+b\right)\leq 0$随机选取一个误分类数据$(x_i,y_i)$;
   (3) 执行更新$\alpha_i:=\alpha_i+\eta,b:=b+\eta y_i$;
   (4) 转至(2)直到没有误分类点
-> 技巧: 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，对于误分类点$x_i$时，直接取对应的列$A_{.,i}$，从而可计算$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
+> 技巧: 可以先计算`gram`矩阵$\mathbf{A} = \hat{X} \hat{X}^T$，对于误分类点$x_i$时，直接取对应的列$A_{.,i}$，快速计算出$(\mathbf{\alpha_{1\times N} \cdot y_{1\times N}^T) A_{.,i}}$。由于$X$和$y$是已知的，因此只需更新$\alpha$即可。
 ---
 
 ```python

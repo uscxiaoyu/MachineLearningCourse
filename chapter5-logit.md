@@ -6,7 +6,7 @@ headingDivider: 0
 # header: '**第4章 线性模型**'
 ---
 <!-- fit -->
-# 第5章 `Logit`模型
+# 第5讲 `Logit`模型
 
 
 ---

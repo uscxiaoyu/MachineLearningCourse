@@ -6,12 +6,13 @@ headingDivider: 0
 # header: '**第4章 线性模型**'
 ---
 <!-- fit -->
-# 第6章 `Softmax`模型
+# 第6讲 `Softmax`模型
 
 ---
 # 主要内容
 
 - `Softmax`回归模型
+- 交叉熵损失函数
 - `Softmax`回归模型的参数学习
 - `torch`实现
     - 梯度下降
@@ -25,8 +26,8 @@ headingDivider: 0
 - 对于多类问题，类别标签$y \in {1, 2,..., C}$ 可以有C个取值．给定一个测试样本$x$，Softmax 回归预测的属于类别c的条件概率为
     $$
     \begin{aligned}
-    p(y=c|\mathbf{x})&=\mathrm{softmax}(\mathbf{w^T_cx})\\
-    &=\frac{\exp(\mathbf{w^T_cx})}{\sum_{i=1}^C \exp(\mathbf{w^T_ix})}
+    p(y=c|\mathbf{x})&=\mathrm{softmax}(\mathbf{w^T_c x})\\
+    &=\frac{\exp(\mathbf{w^T_c x})}{\sum_{i=1}^C \exp(\mathbf{w^T_i x})}
     \end{aligned}
     $$
 
@@ -58,7 +59,7 @@ def softmax(X, W):
 $$
 \begin{aligned}
 \hat{y}&=\text{arg}\max_{i=1}^{C}p(y=c|\mathbf{x})\\
-&=\text{arg}\max_{i=1}^{C}\mathbf{w_i^Tx}
+&=\text{arg}\max_{i=1}^{C}\mathbf{w_i^T x}
 \end{aligned}
 $$
 
@@ -78,13 +79,133 @@ def hat_y(X, W):
     $$
     \begin{aligned}
     \hat{y}&=\text{arg}\max_{i\in\{1,2\}}p(y=c|\mathbf{x})\\
-    &=\text{arg}\max_{i\in\{1,2\}}\mathbf{w_i^Tx}\\
-    &=I(\mathbf{(w_2-w_1)^Tx}>0)
+    &=\text{arg}\max_{i\in\{1,2\}}\mathbf{w_i^T x}\\
+    &=I(\mathbf{(w_2-w_1)^T x}>0)
     \end{aligned}
     $$
     其中$I(\cdot)$是指示函数。
 
 
+--- 
+# 交叉熵损失函数
+
+- 信息量是对于单个事件来说的，但是实际情况一件事有很多种发生的可能，比如掷骰子有可能出现6种情况，明天的天气可能晴、多云或者下雨等等。因此，我们需要评估事件对应的所有可能性。
+
+- 熵（entropy）是表示随机变量不确定的度量，是对表征所有可能发生的事件所需信息量的期望。
+
+- 设$X$是一个取有限个值的随机变量，其概率分布为
+$$
+P(X=x_i)=p_i,i=1,2,...,n
+$$
+
+---
+# 交叉熵损失函数
+- 熵(`entropy`)定义为
+    $$
+    H(x)=\sum_{i=0} p(x_i) I(x_i)=-\sum_{i=1}^n p(x_i) \log p(x_i)
+    $$
+上式中，若$p_i=0$，则定义$0\log 0=0$；对数以2或者e为底，这时熵的单位分别称为比特(bit)或者纳特(nat)。熵只依赖于$X$的分布，与其取值无关，因此也可将$X$的熵记作$H(p)$, 即
+$$
+H(p)=-\sum_{i=1}^n p_i \log p_i
+$$
+熵越大，不确定越大。
+
+---
+# 交叉熵损失函数
+
+- 熵
+
+```python
+def entropy(P):
+    '''
+    P为概率分布
+    '''
+    return -np.sum([p*np.log2(p) if p > 0 else 0 for p in P])
+
+P1 = np.ones(10) / 10
+P2 = np.zeros(10)
+P2[3] = 1
+entropy(P1), entropy(P2)
+```
+
+--- 
+# 交叉熵损失函数
+
+- 条件熵(`conditional entropy`): 表示在已知随机变量$X$的条件下随机变量$Y$的不确定性。
+
+    $$
+    H(Y|X)=\sum_{i=1}^n P(X=x_i)H(Y|X=x_i)
+    $$
+
+其中，$H(Y|X=x_i)=-\sum_j P(Y=y_j|X=x_i)\log P(Y=y_j|X=x_i)$，表示在$X=x_i$时Y的不确定程度；$p(Y=y_j|X=x_i) = \frac{p(X=x_i, Y=y_j)}{p(X=x_i)}$。
+> 如果X与Y无关，则有$H(Y|X)=H(Y)$；如果Y由X唯一决定，则有$H(Y|X)=0$
+
+---
+# 交叉熵损失函数
+
+- 条件熵(`conditional entropy`)
+```python
+def conditional_entropy(P_XY):
+    '''
+    P_XY为X和Y的联合概率分布shape(x_size, y_z)
+    '''
+    return np.sum([np.sum(P_XY[i]) * entropy(P_XY[i, :]/np.sum(P_XY[i])) 
+                   for i in P_XY.shape[1]])
+```
+
+---
+# 交叉熵损失函数
+
+- `KL`散度
+相对熵(`relative entropy`)或KL散度(`Kullback-Leibler divergence`)：度量一个概率分布$p(x)$相对另一个概率分布$q(X)$的差异
+
+$$
+\text{KL(p||q)}=-\sum_x p(x)\log\frac{q(x)}{p(x)}
+$$
+
+- 由`Jesen`不等式可证明，$\text{KL(p||q)}\geq 0$，当且仅当对于所有$x$有$p(x)=q(x)$时，取等号。
+
+- 此外，需注意，$\text{KL(p||q)}\neq \text{KL(q||p)}$
+
+---
+# 交叉熵损失函数
+- `KL`散度
+```python
+# KL散度
+def KL(p_x, q_x):
+    return -np.sum([p_x[i]*np.log(q_x[i]/p_x[i]) 
+                    if p_x[i] > 0 and q_x[i] > 0 else 0 
+                    for i in range(len(p_x))])
+
+# 交叉熵
+def cross_entropy(p_x, q_x):
+    return -np.sum([p_x[i]*np.log(q_x[i]) 
+                    if q_x[i] > 0 else 0 
+                    for i in range(len(p_x))])
+
+```
+
+---
+# 交叉熵损失函数
+
+- 交叉熵(`cross entropy`)
+
+$$
+\text{crossEntropy(p(x), q(x))} = -\sum_x p(x)\log q(x)
+$$
+
+- 与`KL`散度的关系
+$$
+\begin{aligned}
+\text{KL(p||q)} &= -\sum_x p(x)\log\frac{q(x)}{p(x)}\\
+&= -\sum_x p(x)\log q(x) + \sum_x p(x)\log p(x) \\
+&= \text{crossEntropy(p(x), q(x))} - H\left(p(x)\right)
+\end{aligned}
+$$
+
+- 有$\text{crossEntropy(p(x), q(x))} = \text{KL(p||q)} + H\left(p(x)\right)$
+
+- 由于$H\left(p(x)\right)$为定值，针对q最小化交叉熵等价于最小化`KL(p||q)`，即使理论分布与抽样分布之间的差异最小。
 
 ---
 # 2. `Softmax`回归模型的参数学习
@@ -100,7 +221,7 @@ def hat_y(X, W):
     &=-\frac{1}{N}\sum_{n=1}^N(\mathbf{y^{(n)}})^T\log \hat{y}_c^{(n)}
     \end{aligned}
     $$
-    其中，$\hat{y}_c^{(n)}=\text{softmax}(\mathbf(W^Tx^{(n)}))$为样本$x^{(n)}$在每个类别的后验概率。
+    其中，$\hat{y}_c^{(n)}=\text{softmax}\mathbf(W^Tx^{(n)})$为样本$x^{(n)}$在每个类别的后验概率。
 
 ---
 # 2. `Softmax`回归模型的参数学习
@@ -256,3 +377,7 @@ for epoch in range(num_epochs):
             print('epoch {}, loss {}'.format(epoch+1, l_epoch))
 
 ```
+
+---
+
+# 谢谢！
