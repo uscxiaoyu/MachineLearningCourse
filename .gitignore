@@ -6,3 +6,4 @@ dataset/*
 py/.ipynb_checkpoints/
 .vscode/settings.json
 .history/
+*/.ipynb_checkpoints/*
