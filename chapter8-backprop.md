@@ -78,7 +78,7 @@ headingDivider: 0
 
 $$
 \begin{aligned}
-\delta^L&=\frac{\partial{C}}{\partial{a^l}}\odot R'(z^L)  \text{\ \ \ \ \ \ \ \ (BP.1)}\\
+\delta^L&=\frac{\partial{C}}{\partial{a^L}}\odot R'(z^L)  \text{\ \ \ \ \ \ \ \ (BP.1)}\\
 \delta^l&=((w^{l+1})^T\delta^{l+1})\odot\sigma'(z^l) \text{\ \ \ \ \ \ \ \ (BP.2)}\\
 \frac{\partial{C}}{\partial{b_j^l}}&=\delta_j^l \text{ or } \frac{\partial{C}}{\partial{b^l}}=\delta^l \in \mathbb{R}^{M_l} \text{\ \ \ \ \ \ \ \ (BP.3)}\\
 \frac{\partial{C}}{\partial{w_{jk}^l}}&=a_k^{l-1}\delta_j^l \text{ or } \frac{\partial{C}}{\partial{w^l}}=\delta^l (a^{l-1})^T\in \mathbb{R}^{M_l\times M_{l-1}}\text{\ \ \ \ \ \ \ \ (BP.4)}

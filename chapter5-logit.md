@@ -21,7 +21,7 @@ headingDivider: 0
 
 ---
 # 1. `Logit`模型
-考虑一个二分类任务，其标签$y\in \{0,1\}$，而线性回归模型产生的预测值$z=\mathbf{\omega^Tx+b}$是实数，于是需将$z$转换为0/1值。直观地，可以考虑"单位阶跃函数"
+考虑一个二分类任务，其标签$y\in \{0,1\}$，而线性回归模型产生的预测值$z=\mathbf{\omega^T x+b}$是实数，于是需将$z$转换为0/1值。直观地，可以考虑"单位阶跃函数"
 $$
 y=\begin{cases}
 0,z<0;\\
@@ -40,19 +40,19 @@ $$
 
 ---
 # 1. `Logit`模型
-将$z=\mathbf{\omega^Tx+b}$代入对数几率函数，可得
+将$z=\mathbf{\omega^T x+b}$代入对数几率函数，可得
 $$
-y=\frac{1}{1+e^{-\mathbf{(\omega^Tx+b)}}}.
+y=\frac{1}{1+e^{-\mathbf{(\omega^T x+b)}}}.
 $$
 进而转换为
 $$
-\mathrm{ln}\frac{y}{1-y}=\mathbf{\omega^Tx+b}.
+\mathrm{ln}\frac{y}{1-y}=\mathbf{\omega^T x+b}.
 $$
 若将$y$视为样本$\mathbf{x}$作为正例的可能性，则$1-y$是其反例可能性，两者比值为
 $$
 \frac{y}{1-y}
 $$
-称为几率（`odd`），反映了$x$的正例相对反例的可能性。显然，当该值大于1时，$x$作为正例的可能性比反例更大，此时有$\mathbf{\omega^Tx+b}>0$。
+称为几率（`odd`），反映了$x$的正例相对反例的可能性。显然，当该值大于1时，$x$作为正例的可能性比反例更大，此时有$\mathbf{\omega^T x+b}>0$。
 
 ---
 # 1. `Logit`模型
@@ -82,7 +82,7 @@ $$
 $$
 即令每个样本属于其真实标记的概率越大越好。上式又等价于最小化负对数似然率
 $$
-(\omega, b)^* = \text{argmin  } \mathbf{nll(w,b)}=\sum_{i=1}^m\left(-y_i(\omega^Tx_i+b)+\mathbf{ln}(1+e^{\omega^Tx_i+b})\right)
+(\omega, b)^* = \text{argmin  } \mathbf{nll(w,b)}=\sum_{i=1}^m\left(-y_i(\omega^T x_i+b)+\mathbf{ln}(1+e^{\omega^T x_i+b})\right)
 $$
 
 ---
@@ -244,7 +244,7 @@ def mini_batch_sgd(X, y, loss_func, beta, bias=True, num_epochs=50, batch_size=2
 ---
 # 5. 类别不平衡问题
 
-- 用$y=w^Tx+b$对新样本进行分类时，事实上是在用预测出的y值与一个阈值进行比较，例如通常在$y>0.5$时判别为正例，否则为反例。y实际上表达了正例的可能性，几率$\frac{y}{1-y}$则反映了正例可能性与反例可能性的比值，阈值设置为0.5表明分类器认为真实正、反例可能性相同，则分类器的决策规则为
+- 用$y=w^T x+b$对新样本进行分类时，事实上是在用预测出的y值与一个阈值进行比较，例如通常在$y>0.5$时判别为正例，否则为反例。y实际上表达了正例的可能性，几率$\frac{y}{1-y}$则反映了正例可能性与反例可能性的比值，阈值设置为0.5表明分类器认为真实正、反例可能性相同，则分类器的决策规则为
 $$
 \text{如果 }\frac{y}{1-y}>1, \text{那么预测为正例}
 $$

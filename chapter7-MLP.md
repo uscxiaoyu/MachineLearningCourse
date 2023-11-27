@@ -616,7 +616,7 @@ mnist_train = torchvision.datasets.FashionMNIST(root='../dataset/fashion_mnist',
 mnist_test = torchvision.datasets.FashionMNIST(root='../dataset/fashion_mnist', 
                 train=False, transform=transforms.ToTensor())
 ```
-> 下载太太太太太慢了！！！！！！中途老停止！！！放弃吧
+> 这种方法下载太太太太太慢了！！！！！！
 
 ---
 # `Fashion-MNIST`数据集
