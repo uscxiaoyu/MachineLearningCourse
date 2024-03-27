@@ -6,18 +6,17 @@ headingDivider: 0
 # header: '**第3章 k-近邻法**'
 ---
 <!-- fit -->
-# 第3讲 `k`-近邻法
+# `K`-近邻法
 
 ---
 # 主要内容
 
-- `k`近邻算法
+- `k`近邻
 - 距离度量
 - `kd`树
     - 生成
     - 搜索
 - 决策规则
-
 
 ---
 ![bg right:60% fit](./pictures/3.1.svg)
@@ -57,17 +56,17 @@ headingDivider: 0
 
 ---
 # 2. 距离度量
-当$p=2$时，称为欧式距离(`Euclidean distance`)，即
+- 当$p=2$时，称为欧式距离(`Euclidean distance`)，即
 $$
 L_2(x_i,x_j)=\left(\sum_{l=1}^n|x_i^{(l)}-x_j^{(l)}|^2\right)^{\frac{1}{2}}
 $$
 
-当$p=1$时，称为曼哈顿距离(`Manhattan distance`)，即
+- 当$p=1$时，称为曼哈顿距离(`Manhattan distance`)，即
 $$
 L_1(x_i,x_j)=\left(\sum_{l=1}^n|x_i^{(l)}-x_j^{(l)}|\right)
 $$
 
-当$p=\infty$时，它是各个坐标距离的最大值，即
+- 当$p=\infty$时，它是各个坐标距离的最大值，即
 $$
 L_{\infty}(x_i,x_j)=\max_l|x_i^{(l)}-x_j^{(l)}|
 $$

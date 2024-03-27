@@ -3,10 +3,10 @@ marp: true
 # size: 4:3
 paginate: true
 headingDivider: 0
-# header: '**第4章 线性模型**'
+# header: '**`Logit`模型**'
 ---
 <!-- fit -->
-# 第5讲 `Logit`模型
+# `Logit`模型
 
 
 ---
@@ -86,7 +86,7 @@ $$
 $$
 
 ---
-# 2. `Logit`回归的参数学习
+# 2. `Logit`模型的参数学习
 令$\beta = (\omega, b), \hat{x}_i = (x_i, 1)$，则有
 $$
 \beta^* = \text{argmin  } \mathbf{nll(\beta)}=\sum_{i=1}^m\left(-y_i \hat{x}_i \beta^T+\mathbf{ln}(1+e^{\beta^T \hat{x}_i})\right)
@@ -105,7 +105,7 @@ $$
 $$
 
 ---
-# 2. `Logit`回归的参数学习
+# 2. `Logit`模型的参数学习
 ```python
 # 负对数似然函数
 def negloglikelihood(X, y, beta, bias=True):
@@ -140,7 +140,6 @@ def gradident_descendent_logit(X, y, lr=0.05, bias=True):
         hat_X = torch.cat([X, torch.ones(X.shape[0], 1)], axis=1)
     else:
         hat_X = X
-
     beta = torch.randn(hat_X.shape[1], 1)  # 增广权重
     loss = negloglikelihood(X, y, beta, bias=bias)
     trace_loss = loss.numpy()
@@ -151,8 +150,7 @@ def gradident_descendent_logit(X, y, lr=0.05, bias=True):
         loss = loss.numpy()
         trace_loss = np.concatenate([trace_loss, loss])
         if np.abs((trace_loss[-1] - trace_loss[-2]) / trace_loss[-1]) < 1e-5:
-            break
-            
+            break     
     return beta.squeeze(), trace_loss
 
 ```
@@ -175,13 +173,12 @@ def mini_batch_sgd(X, y, loss_func, beta, bias=True, num_epochs=50, batch_size=2
         if (epoch + 1) % 10 == 0:
             with torch.no_grad():  # 不计算梯度，加速损失函数的运算
                 train_l = loss_func(t_x, t_y, beta, bias=bias)  # 最近一次的负对数似然率
-                est_beta = [u[0] for u in beta.detach().numpy()]  # detach得到一个有着和原tensor相同数据的tensor
+                est_beta = [u[0] for u in beta.detach().numpy()]
                 train_accu_ratio = precision(beta, X, y)
                 print(f'epoch {epoch + 1}, loss: {train_l.numpy()[0][0]:.4f}')
                 print(f'    train accuracy: {train_accu_ratio}')
             
     return est_beta, train_l.numpy()
-
 ```
 
 ---

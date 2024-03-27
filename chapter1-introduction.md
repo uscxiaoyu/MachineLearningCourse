@@ -6,7 +6,7 @@ headingDivider: 0
 # header: '**机器学习：第1章-概述**'
 
 ---
-# 机器学习
+# 机器学习概述
 
 ---
 # Richard Philip Feynman

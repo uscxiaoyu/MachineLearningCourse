@@ -3,10 +3,10 @@ marp: true
 # size: 16:9
 paginate: true
 headingDivider: 0
-header: '**第2章 感知机**'
+# header: '**感知机**'
 ---
 <!-- fit -->
-# 第2讲 感知机
+# 感知机
 
 ---
 # 主要内容
@@ -225,8 +225,8 @@ def learn_model(lossfunc, X, y, epochs=50, lr=0.03):
         w.grad.data.zero_()
         b.data.sub_(lr*b.grad)
         b.grad.data.zero_()
-        with torch.no_grad():  # 不计算梯度，加速损失函数的运算
-            d_w, d_b = w.detach(), b.detach()   #  从计算图中解绑，后面的操作不影响计算图中对应的结果
+        with torch.no_grad():  # 查看当前的损失函数值（不计算参数梯度）
+            d_w, d_b = w.detach(), b.detach()   #  将参数计算图中解绑
             train_l = loss(d_w, d_b, X, y)  # 最近一次的负对数似然率
             if epoch % 5 == 0:
                 print(f'epoch {epoch}, loss: {train_l.numpy():.4f}')
@@ -239,7 +239,7 @@ def learn_model(lossfunc, X, y, epochs=50, lr=0.03):
 
 ---
 # 算法收敛性
-**定理2.1 (`Novikoff`)** 设训练集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$是线性可分的，其中$x_i\in\chi=\mathbb{R^n}, y_i\in\mathbf{Y}=\{-1,+1\}, i=1,2,...,N$，则
+**定理`2.1 (Novikoff)`** 设训练集$T=\{(x_1,y_1),(x_2,y_2),...,(x_N,y_N)\}$是线性可分的，其中$x_i\in\chi=\mathbb{R^n}, y_i\in\mathbf{Y}=\{-1,+1\}, i=1,2,...,N$，则
 - 存在满足条件$||\hat{\omega}_{opt}||=1$的超平面$\hat{\omega}_{opt}\cdot \hat{x}+b_{opt}=0$将训练集完全正确分开；且存在$\gamma > 0$，对于所有的$i=1,2,...,N$有 $y_i(\hat{\omega}_{opt}\cdot x_i+b_{opt})\geq \gamma$
 - 令$R= \max_{1 \leq i \leq N}||\hat{x_i}||$，则感知机算法`2.1`在训练集上的误分类次数k满足
 $$
@@ -251,14 +251,13 @@ $$
 ---
 # 感知机学习算法的对偶形式
 
-- 对偶形式的基本想法: 将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。
-- 假定**初始值$\omega_0,b_0$均为0**，更新后通过$\omega:=\omega+\eta y_i x_i, b:=b+\eta y_i$ 给出
-- 逐步修改$\omega, b$，经过$n$次修改后，则$\omega, b$关于$(x_i,y_i)$的增量分别是$\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$，最后学习到的$\omega, b$可以分别表示为
+- **对偶形式的基本想法**: 将$\omega$和$b$表示为实例$x_i$和标记$y_i$的线性组合形式，通过求解其系数而求得$\omega$和$b$。
+- 假定**初始值$\omega_0,b_0$均为0**，逐步更新$\omega:=\omega+\eta y_i x_i, b:=b+\eta y_i$，则$\omega, b$关于$(x_i,y_i)$ 的增量分别是 $\alpha_iy_ix_i$和$\alpha_iy_i$，这里$\alpha_i=n_i\eta$，最后$\omega, b$可表示为
 $$
 \omega=\sum_{i=1}^N\alpha_iy_ix_i, b=\sum_{i=1}^N\alpha_iy_i
 $$
-- 实例点更新次数越多，说明它对分离超平面越敏感，距离分离超平面越近，也就越难正确分类，即这样的实例对学习结果影响最大。
-- 对偶形式的目的是降低每次迭代的运算量，但是并不是在任何情况下都能降低运算量，而是**在特征空间的维度远大于数据集大小**时才起作用。
+> 实例点更新次数越多，说明它对分离超平面越敏感，距离分离超平面越近，也就越难正确分类，即这样的实例对学习结果影响最大。
+- **注意**: 对偶形式的目的是降低每次迭代的运算量，但是并不是在任何情况下都能降低运算量，而是**在特征空间的维度远大于数据集大小**时才起作用。
 
 ---
 # 感知机学习算法的对偶形式
