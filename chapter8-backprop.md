@@ -329,13 +329,13 @@ class FNN:
     ...
     def cross_entropy(self, X, y):
         '''
-        采用交叉熵损失函数
         labels: one-hot形式
         hat_y: softmax之后对应概率向量，多层感知机的输出
         '''
         hat_y = self.forward(X)
         if len(y.shape) == 2:
-            crossEnt = -torch.dot(y.reshape(-1), torch.log10(hat_y.float()).reshape(-1)) / y.shape[0]  # 展开成1维，点积
+            # 展开成1维，点积
+            crossEnt = -torch.dot(y.reshape(-1),torch.log10(hat_y.float()).reshape(-1))/y.shape[0] 
         elif len(y.shape) == 1:
             crossEnt = -torch.mean(torch.log10(hat_y[torch.arange(y.shape[0]), y.long()]))
         else:
