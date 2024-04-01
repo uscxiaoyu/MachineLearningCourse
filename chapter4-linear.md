@@ -3,10 +3,11 @@ marp: true
 # size: 4:3
 paginate: true
 headingDivider: 0
-# header: '**第4章 线性模型**'
+# header: '**线性回归模型**'
+
 ---
-<!-- fit -->
-# 第4讲 线性模型
+# 线性回归模型
+
 
 ---
 # 主要内容
@@ -49,13 +50,11 @@ headingDivider: 0
 
 
 ---
-# 1.线性回归模型
 
 ![bg right:60% fit](./pictures/4.1.svg)
 
 
 ---
-# 1.线性回归模型
 - 给定数据集$D=\{(\mathbf{x_1},y_1),(\mathbf{x_2},y_2),...,(\mathbf{x_m},y_m)\}$，其中$\mathbf{x_i}=(x_{i1};x_{i2};...;x_{id}),y_i\in R$. 线性回归试图学得一个线性模型以尽可能准确地预测实数值输出标记. 我们试图学得
     $$f(\mathbf{x_i})=\mathbf{x_i}+b,使得f(x_i)\simeq y_i,$$
     这称为 **多元线性回归(`multivariate linear regression`)** .
@@ -84,7 +83,6 @@ headingDivider: 0
     $$
 
 ---
-# 1.线性回归模型
 
 ## 学习准则1: 最小化总(均方)平方误差
 - 如何确定$\mathbf{\hat\omega}$呢？关键在于衡量$f(\mathbf{x})$和$y$的差别。总平方误差是回归任务中最常用的性能衡量指标，因此我们可以试图让总平方误差最小化.
@@ -100,7 +98,6 @@ $$
 - 令上式为`0`可得$\mathbf{\hat\omega}$最优解的封闭解。
 
 ---
-# 1.线性回归模型
 ## 学习准则2: 最大化(对数)似然率
 - 假定模型残差服从正态分布，$\epsilon\sim N(0,\sigma^2)$，即有$(y-xw^T)\sim N(0,\sigma^2)$
 - 根据最大似然估计原则，建立优化目标
@@ -111,14 +108,10 @@ $$
 $$
 \max_{\omega}  \frac{1}{(\sqrt{2\pi}\sigma)^N}\exp{\left(-\frac{\sum_{i=1}^N(y_i-x_i\hat{w}^T)^2}{2\sigma^2}\right)}
 $$
-- 等价于最小二乘优化目标
-$$
-\min_{\omega}  \mathbf{(y-X\hat{w})(y-X\hat{w})^T}
-$$
+- 等价于最小二乘优化目标: $\min_{\omega}  \mathbf{(y-X\hat{w})(y-X\hat{w})^T}$
 
 
 ---
-# 1.线性回归模型
 - 当$\mathbf{X^T X}$为满秩矩阵或正定矩阵时，令$\cfrac{\partial E_{\hat{w}}}{\partial \hat{w}}=0$可得
 $$
 \mathbf{\hat\omega^*=(X^T X)^{-1}X^T y},
@@ -132,7 +125,6 @@ $$
 - 然而，现实任务中$\mathbf{X^T X}$往往不是满秩矩阵，而且随着数据量的增加，计算量呈现大幅增长。因此，往往求助于数值优化算法（如梯度下降）迭代求解。
 
 ---
-# 1.线性回归模型
 
 ## 模型评价指标
 
@@ -143,7 +135,6 @@ $$
 
 
 ---
-# 1.线性回归模型
 ## 训练方法
 - 在求数值解的优化算法中，小批量随机梯度下降(`mini-batch stochastic gradient descent`)在深度学习中被广泛使用。
 
@@ -154,7 +145,6 @@ $$
     > **批量梯度下降法**和**随机梯度下降**可以看作是**小批量随机梯度下降法**的特殊形式，批量梯度下降法使用所有的样本更新参数，随机梯度下降使用1个样本更新参数，小批量随机梯度下降法选择1个小样本更新参数
 
 ---
-# 1.线性回归模型
 ## 线性模型
 
 ```python
@@ -167,7 +157,6 @@ def linearModel(X: torch.tensor, w: torch.tensor)-> torch.tensor:
 ```
 
 ---
-# 1.线性回归模型
 ## 损失函数
 ```python
 def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.tensor:
@@ -182,7 +171,6 @@ def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.
 ```
 
 ---
-# 1.线性回归模型
 ## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
 - `L1: Lasso regression`
     $$
@@ -195,7 +183,6 @@ def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.
     $$
 
 ---
-# 1.线性回归模型
 ## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
 
 - `L2: Ridge regression`
@@ -211,7 +198,6 @@ def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.
     $$
 
 ---
-# 1.线性回归模型
 ## 加入惩罚项的损失函数
 
 ```python
@@ -235,7 +221,6 @@ def meanSquaredLoss_Penalty(X, y, w, delta=0.5, l=0):
 ```
 
 ---
-# 1.线性回归模型
 ## 损失函数`mse`对`w`的梯度
 ```python
 def grad_mse_w(X, y, w):
@@ -248,7 +233,6 @@ def grad_mse_w(X, y, w):
 ```
 
 ---
-# 1.线性回归模型
 ## 基于梯度下降实现多元线性回归
 **线性回归的梯度下降参数学习算法**
 - 输入: 特征`X`, 标签`y`, 样本数量`m`, 训练回合数`epochs`, 学习率$\eta$
@@ -261,7 +245,6 @@ def grad_mse_w(X, y, w):
     - 令$w^*=w, f(x, w^*)=x^Tw^*$, 算法结束
 
 ---
-# 1.线性回归模型
 ## 基于梯度下降实现多元线性回归
 - 自己写导数
 
@@ -278,7 +261,6 @@ def grad_mse_w(X, y, w):
     ```
 
 ---
-# 1.线性回归模型
 ## 基于梯度下降实现多元线性回归
 - 基于`torch`自动求导机制
     ```python
@@ -307,7 +289,6 @@ y=\alpha + \sum_{j=1}^{p}X^jw_j
 $$
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 **线性回归的小批量随机梯度下降学习方法**
 - 输入: 特征`X`, 标签`y`, 批次样本量`batch_size`, 训练回合总数`epochs`, 学习率$\eta$
@@ -318,7 +299,6 @@ $$
 
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机随机梯度下降实现多元线性回归
 **线性回归的小批量随机梯度下降学习方法**
 
@@ -330,7 +310,6 @@ $$
     - 令$w^*=w, f(x, w^*)=x^Tw^*$, 算法结束
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 **线性回归的小批量随机梯度下降学习方法**
 
@@ -339,7 +318,6 @@ $$
 > - **批量梯度下降法**和**随机梯度下降**可以看作是**小批量随机梯度下降法**的特殊形式，批量梯度下降法使用所有的样本更新参数，随机梯度下降使用1个样本更新参数，小批量随机梯度下降法选择1个小样本更新参数
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 ```python
 # 随机选取batch_size数量的数据，生成器
@@ -357,7 +335,6 @@ def sampleData(batch_size, features, labels):
 ```
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法1: 自己定义导数
 ```python
@@ -377,7 +354,6 @@ def lm_mb_grad_desc(features, labels, batch_size=20,
 > 当`batch_size=1`时，即为随机梯度下降
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法2: 利用`torch`的自动求导机制
     - **自动微分（Automatic Differentiation，AD）** 是一种可以对一个（程序）函数进行计算导数的方法。符号微分的处理对象是数学表达式，而自动微分的处理对象是一个函数或一段程序。
@@ -385,7 +361,6 @@ def lm_mb_grad_desc(features, labels, batch_size=20,
     - 自动微分的基本原理是所有的数值计算可以分解为一些基本操作，包含`+, −, ×, / `和一些初等函数`exp, log, sin, cos`等，然后利用链式法则来自动计算一个复合函数的梯度。
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 方法2: 利用`torch`的自动求导机制
 ![bg right:60% fit](./pictures/4.3.jpg)
@@ -397,7 +372,6 @@ $$
 
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法2: 利用`torch`的自动求导机制
 ```python
@@ -418,7 +392,6 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
 ```
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法2: 利用`torch`的自动求导机制
 ```python
@@ -436,14 +409,12 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
 ```
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法3: 基于`torch.nn.Module`实现
 ![bg right:60% fit](./pictures/4.2.svg)
 
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法3: 基于`torch.nn.Module`实现
 
@@ -458,7 +429,6 @@ data_iter = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 ```
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法3: 基于`torch.nn.Module`实现
 
@@ -474,7 +444,6 @@ class LinearRegressionModel(torch.nn.Module):
 ```
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法3: 基于`torch.nn.Module`实现单层神经网络模型(线性回归)
 ```python
@@ -492,7 +461,6 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.05)  # 随机梯度下降算法
 ```
 
 ---
-# 1.线性回归模型
 ## 基于小批量随机梯度下降实现多元线性回归
 - 方法3: 基于`torch.nn.Module`实现
 

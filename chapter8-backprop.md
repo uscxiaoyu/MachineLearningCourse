@@ -78,7 +78,7 @@ headingDivider: 0
 
 $$
 \begin{aligned}
-\delta^L&=\frac{\partial{C}}{\partial{a^l}}\odot R'(z^L)  \text{\ \ \ \ \ \ \ \ (BP.1)}\\
+\delta^L&=\frac{\partial{C}}{\partial{a^L}}\odot R'(z^L)  \text{\ \ \ \ \ \ \ \ (BP.1)}\\
 \delta^l&=((w^{l+1})^T\delta^{l+1})\odot\sigma'(z^l) \text{\ \ \ \ \ \ \ \ (BP.2)}\\
 \frac{\partial{C}}{\partial{b_j^l}}&=\delta_j^l \text{ or } \frac{\partial{C}}{\partial{b^l}}=\delta^l \in \mathbb{R}^{M_l} \text{\ \ \ \ \ \ \ \ (BP.3)}\\
 \frac{\partial{C}}{\partial{w_{jk}^l}}&=a_k^{l-1}\delta_j^l \text{ or } \frac{\partial{C}}{\partial{w^l}}=\delta^l (a^{l-1})^T\in \mathbb{R}^{M_l\times M_{l-1}}\text{\ \ \ \ \ \ \ \ (BP.4)}
@@ -329,13 +329,13 @@ class FNN:
     ...
     def cross_entropy(self, X, y):
         '''
-        采用交叉熵损失函数
         labels: one-hot形式
         hat_y: softmax之后对应概率向量，多层感知机的输出
         '''
         hat_y = self.forward(X)
         if len(y.shape) == 2:
-            crossEnt = -torch.dot(y.reshape(-1), torch.log10(hat_y.float()).reshape(-1)) / y.shape[0]  # 展开成1维，点积
+            # 展开成1维，点积
+            crossEnt = -torch.dot(y.reshape(-1),torch.log10(hat_y.float()).reshape(-1))/y.shape[0] 
         elif len(y.shape) == 1:
             crossEnt = -torch.mean(torch.log10(hat_y[torch.arange(y.shape[0]), y.long()]))
         else:

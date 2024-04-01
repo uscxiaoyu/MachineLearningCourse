@@ -3,10 +3,10 @@ marp: true
 # size: 4:3
 paginate: true
 headingDivider: 0
-# header: '**第4章 线性模型**'
+# header: '**`Softmax`模型**'
 ---
 <!-- fit -->
-# 第6讲 `Softmax`模型
+# `Softmax`模型
 
 ---
 # 主要内容
@@ -14,7 +14,6 @@ headingDivider: 0
 - `Softmax`回归模型
 - 交叉熵损失函数
 - `Softmax`回归模型的参数学习
-- `torch`实现
     - 梯度下降
     - 小批量梯度下降
     - `torch.nn.Module`
@@ -87,7 +86,7 @@ def hat_y(X, W):
 
 
 --- 
-# 交叉熵损失函数
+# 2. 交叉熵损失函数
 
 - 信息量是对于单个事件来说的，但是实际情况一件事有很多种发生的可能，比如掷骰子有可能出现6种情况，明天的天气可能晴、多云或者下雨等等。因此，我们需要评估事件对应的所有可能性。
 
@@ -99,7 +98,6 @@ P(X=x_i)=p_i,i=1,2,...,n
 $$
 
 ---
-# 交叉熵损失函数
 - 熵(`entropy`)定义为
     $$
     H(x)=\sum_{i=0} p(x_i) I(x_i)=-\sum_{i=1}^n p(x_i) \log p(x_i)
@@ -111,7 +109,6 @@ $$
 熵越大，不确定越大。
 
 ---
-# 交叉熵损失函数
 
 - 熵
 
@@ -129,7 +126,6 @@ entropy(P1), entropy(P2)
 ```
 
 --- 
-# 交叉熵损失函数
 
 - 条件熵(`conditional entropy`): 表示在已知随机变量$X$的条件下随机变量$Y$的不确定性。
 
@@ -141,7 +137,6 @@ entropy(P1), entropy(P2)
 > 如果X与Y无关，则有$H(Y|X)=H(Y)$；如果Y由X唯一决定，则有$H(Y|X)=0$
 
 ---
-# 交叉熵损失函数
 
 - 条件熵(`conditional entropy`)
 ```python
@@ -154,7 +149,6 @@ def conditional_entropy(P_XY):
 ```
 
 ---
-# 交叉熵损失函数
 
 - `KL`散度
 相对熵(`relative entropy`)或KL散度(`Kullback-Leibler divergence`)：度量一个概率分布$p(x)$相对另一个概率分布$q(X)$的差异
@@ -168,7 +162,6 @@ $$
 - 此外，需注意，$\text{KL(p||q)}\neq \text{KL(q||p)}$
 
 ---
-# 交叉熵损失函数
 - `KL`散度
 ```python
 # KL散度
@@ -186,7 +179,6 @@ def cross_entropy(p_x, q_x):
 ```
 
 ---
-# 交叉熵损失函数
 
 - 交叉熵(`cross entropy`)
 
@@ -208,7 +200,7 @@ $$
 - 由于$H\left(p(x)\right)$为定值，针对q最小化交叉熵等价于最小化`KL(p||q)`，即使理论分布与抽样分布之间的差异最小。
 
 ---
-# 2. `Softmax`回归模型的参数学习
+# 3. `Softmax`回归模型的参数学习
 - 给定N个训练样本，Softmax回归使用交叉熵损失函数学习最优的参数矩阵$W$。为了方便起见，使用C维的`one-hot`向量表示类别标签，对于类别`i`，其向量表示为
     $$
     y = [I(i=1), I(i=2), ..., I(i=C)]
@@ -224,7 +216,6 @@ $$
     其中，$\hat{y}_c^{(n)}=\text{softmax}\mathbf(W^Tx^{(n)})$为样本$x^{(n)}$在每个类别的后验概率。
 
 ---
-# 2. `Softmax`回归模型的参数学习
 
 ```python
 def cross_entropy(X, y, W):
@@ -240,7 +231,6 @@ def cross_entropy(X, y, W):
 ```
 
 ---
-# 2. `Softmax`回归模型的参数学习
 - 风险函数$\mathbf{R(W)}$关于$W$的梯度为
 $$
 \frac{\partial R(W)}{\partial W}=-\frac{1}{N}\sum_{n=1}^N\mathbf{x^{(n)}(y^{(n)}-\hat{y}^{(n)})}^T
@@ -259,8 +249,6 @@ def grad_crosEnt_W(X, y, W):
 ```
 
 ---
-## 2. `Softmax`回归模型的参数学习
-
 **采用梯度下降法，softmax回归的训练过程为**
 
 - 输入: 训练集X，`one-hot`形式的标签y
@@ -274,7 +262,6 @@ def grad_crosEnt_W(X, y, W):
     - 直到满足指定迭代次数，令$w^*=w^T$。
                                                                                                                                                 
 ---
-## 3. `Softmax`回归模型的参数学习
 - 方法1: 梯度下降-人工求导
 
 ```python
@@ -297,7 +284,6 @@ def softmax_sgd(X, y, num_steps=100, lr=0.1):
 
 
 ---
-## 3. `Softmax`回归模型的参数学习
 - 方法2: 随机梯度下降-自动求导
 
 ```python
@@ -329,7 +315,6 @@ def softmax_miniBatch_sgd(X, y, num_epoch=50, batch_size=40, lr=0.05):
 ```
 
 ---
-## 3. `Softmax`回归模型的参数学习
 - 方法3: `torch.nn`
 ```python
 class SofmaxRegresModel(torch.nn.Module): 
@@ -355,7 +340,6 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.05)
 ```
 
 ---
-## 3. `Softmax`回归模型的参数学习
 - 方法3: `torch.nn`
 
 ```python
