@@ -6,7 +6,7 @@ headingDivider: 0
 # header: '**第4章 线性模型**'
 ---
 <!-- fit -->
-# 第8讲 误差反向传播算法
+# 误差反向传播算法
 
 ---
 # 主要内容
@@ -23,17 +23,17 @@ headingDivider: 0
 ---
 # 引言
 
-- 上一节我们看到了神经⽹络如何使⽤梯度下降算法来学习他们⾃⾝的权重和偏置。但是，这⾥还留下了⼀个问题：我们并没有讨论如何计算代价函数的梯度。这是很⼤的缺失！我们接下来学习计算这些梯度的快速算法，也就是反向传播（`backpropagation`）。
+- 神经⽹络主要使⽤梯度下降算法学习权重和偏置。但是，这⾥还留下了⼀个问题：我们并没有讨论如何计算代价函数的梯度。这是很⼤的缺失！我们接下来学习计算这些梯度的快速算法，也就是**反向传播（`Back propagation`）**。
 
-- 反向传播算法最初在1970 年代被提及，但是⼈们直到`David Rumelhart、Geoffrey Hinton 和Ronald Williams` 的著名的1986年[论⽂](https://www.nature.com/articles/323533a0)中才认识到这个算法的重要性。这篇论⽂描述了对⼀些神经⽹络反向传播要⽐传统的⽅法更快，这使得使⽤神经⽹络来解决之前⽆法完成的问题变得可⾏。
+- 反向传播算法最初在1970年代被提及，但是⼈们直到`D. Rumelhart, G. Hinton & R. Williams (1986)` 的著名[论⽂](https://www.nature.com/articles/323533a0)中才认识到这个算法的重要性。这篇论⽂描述了对⼀些神经⽹络反向传播要⽐传统的⽅法更快，这使得使⽤神经⽹络来解决之前⽆法完成的问题变得可⾏。
 
-- 现在，反向传播算法已经是神经⽹络学习的重要组成部分了。
+- 现在，反向传播算法已经是神经⽹络学习的重要组成部分。
 
 ---
 # 引言
 - 为了利用梯度下降法训练神经网络，必须首先计算神经网络中损失函数关于权重和偏置的梯度。
 
-- 如何计算这些梯度？
+- 如何计算这些梯度？有以下两种方法
     - 数值方法
     $$
     \frac{\partial C}{\partial w_{ij}}\approx \frac{C(w_{ij}+\eta\Delta e_{ij}) - C(w_{ij})}{\eta}
@@ -53,6 +53,7 @@ headingDivider: 0
     - 前馈神经网络：多层感知机、卷积神经网络
     - 记忆神经网络：循环神经网络、LSTM
     - 图神经网络
+    - 大语言模型: `Transformer, BERT, GPT`
 
 ---
 # 误差反向传播的4个方程
@@ -101,7 +102,7 @@ $$
 
 - 假定在前馈信息传播过程中，$l$层第$i$个神经元的净值$z_i^l$增加了$\Delta z_i^l$，则最终损失函数的增量应为$\frac{\partial C}{\partial z_i^l}\Delta z_i^l$。
 
-- 假设$\frac{\partial C}{\partial z_i^l}$有⼀个很⼤的值（或正或负）。那么这个可以通过选择与$\frac{\partial C}{\partial z_i^l}$相反符号的$\Delta z_i^l$来降低代价。相反，如果$\frac{\partial C}{\partial z_i^l}$接近0，那么我们并不能通过扰动带权输⼊$z^l_j$来改善太多代价。这时候神经元已经很接近最优了。所以这⾥有⼀种启发式的认识， $\frac{\partial C}{\partial z_j^l}$是$l$层神经元$j$的误差的度量。
+- **对$\frac{\partial C}{\partial z_j^l}$是$l$层神经元$j$的误差度量的启发式认识**: 假设$\frac{\partial C}{\partial z_i^l}$取很大的值（或正或负），那么可以通过选择与$\frac{\partial C}{\partial z_i^l}$相反符号的$\Delta z_i^l$来降低代价。相反，如果$\frac{\partial C}{\partial z_i^l}$接近0，那么我们并不能通过扰动带权输⼊$z^l_j$来改善太多代价。
 
 - 按照上⾯的描述，我们定义$l$层的第$j$个神经元上的误差$\delta_i^l$为：
 $$
@@ -126,9 +127,7 @@ $$
 \delta_j^L=\frac{\partial C}{\partial a_j^L}\sigma'(z_j^L)
 $$
 
->右式第⼀个项$\frac{\partial C}{\partial a_j^L}$表⽰代价随着j层输出激活值的变化⽽变化的速度。假如$C$不太依赖⼀个特定的输出神经元j，那么$\frac{\partial C}{\partial a_j^L}$就会很⼩，这也是我们想要的效果。右式第⼆项$\sigma'(z_j^L)$刻画了在$z_j^L$处激活函数$\sigma$变化的速度。
->
->上式也可以重新写成矩阵形式
+>右式第⼀个项$\frac{\partial C}{\partial a_j^L}$表⽰C随着j层输出激活值的变化⽽变化的速度。假如$C$不太依赖⼀个特定的输出神经元j，那么$\frac{\partial C}{\partial a_j^L}$就会很⼩。右式第⼆项$\sigma'(z_j^L)$刻画了在$z_j^L$处激活函数$\sigma$变化的速度。上式也可以重新写成矩阵形式
 >$$
 \delta^L=\nabla_aC\odot R'(z^L)
 >$$
@@ -142,7 +141,7 @@ $$
 \delta^l=((w^{l+1})^T\delta^{l+1})\odot\sigma'(z^l)
 $$
 
->假设我们知道$l+1$层的误差$\delta^{l+1}$。当我们应⽤转置的权重矩阵$(w^{l+1})^T$ ，我们可以凭直觉地把它看作是在沿着⽹络反向移动误差，给了我们度量在$l$层输出的误差⽅法。然后，我们进⾏`Hadamard` 乘积运算$\odot\sigma'(z^l)$。这会让误差通过$l$ 层的激活函数反向传递回来并给出在第$l$ 层的带权输⼊的误差$\delta$。
+>假设已知$l+1$层的误差$\delta^{l+1}$。当应⽤转置的权重矩阵$(w^{l+1})^T$ ，可以凭直觉地把它看作是在沿着⽹络反向移动误差，给了度量$l$层输出的误差⽅法。然后，进⾏`Hadamard` 乘积运算$\odot\sigma'(z^l)$，以使误差通过$l$层的激活函数反向传递回来，并给出在第$l$层的带权输⼊的误差$\delta$。
 
 - **通过组合`(BP.1)` 和`(BP.2)`，我们可以计算任何层的误差$\delta^l$。⾸先使⽤`(BP.1)` 计算$\delta^L$，然后应⽤⽅程`(BP.2)` 来计算$\delta^{L-1}$，然后再次⽤⽅程`(BP.2)`来计算$\delta^{L-2}$，如此⼀步⼀步地反向传播完整个⽹络。**
 
@@ -175,7 +174,7 @@ $$
 ![bg right:90% fit](./pictures/7.computational_graph.svg)
 
 ---
-# 误差反向传播的4个方程
+# 案例
 
 ## 交叉熵风险函数
 - 交叉熵风险函数$\mathbf{R(z^L, y)}=-y\cdot\log{a^L}$关于$z^L$的梯度为
@@ -188,7 +187,7 @@ $$
 
 
 ---
-# 误差反向传播的4个方程
+# 案例
 ## 交叉熵风险函数
 - 当$i=j$时, 有$\frac{\partial{a_i}}{\partial{z_j}}=a_i(1-a_i)$; 当$i\neq j$时, 有$\frac{\partial{a_i}}{\partial{z_j}}=-a_ia_j$, 因此有
 
@@ -207,7 +206,7 @@ $$
 
 
 ---
-# 误差反向传播的4个方程
+# 案例
 - 因此，结合链式法则，有
 $$
 \begin{aligned}
@@ -464,23 +463,23 @@ def d_softmax(x):
 
 神经网络的参数学习是一个非凸优化问题．当使用梯度下降法来进行优化网络参数时，参数初始值的选取十分关键，关系到网络的优化效率和泛化能力．参数初始化的方式通常有以下三种：
 
-- 预训练初始化：不同的参数初始值会收敛到不同的局部最优解．虽然这些局部最优解在训练集上的损失比较接近，但是它们的泛化能力差异很大．一个好的初始值会使得网络收敛到一个泛化能力高的局部最优解．通常情况下，一个已经在大规模数据上训练过的模型可以提供一个好的参数初始值，这种初始化方法称为预训练初始化（`Pre-trained Initialization`）．预训练任务可以为监督学习或无监督学习任务．由于无监督学习任务更容易获取大规模的训练数据，因此被广泛采用．预训练模型在目标任务上的学习过程也称为精调（`Fine-Tuning`）．
+- 预训练初始化：不同的参数初始值会收敛到不同的局部最优解．虽然这些局部最优解在训练集上的损失比较接近，但是它们的泛化能力差异很大．一个好的初始值会使得网络收敛到一个泛化能力高的局部最优解．通常情况下，一个已经在大规模数据上训练过的模型可以提供一个好的参数初始值，这种初始化方法称为**预训练初始化（`Pre-trained Initialization`）**．预训练任务可以为监督学习或无监督学习任务．由于无监督学习任务更容易获取大规模的训练数据，因此被广泛采用．预训练模型在目标任务上的学习过程也称为**精调（`Fine-Tuning`）**．
 
 ---
 # 参数初始化
 
-- 随机初始化：在线性模型的训练（比如感知机和`Logistic` 回归）中，我们一般将参数全部初始化为0．但是这在神经网络的训练中会存在一些问题．因为如果参数都为0，在第一遍前向计算时，所有的隐藏层神经元的激活值都相同；在反向传播时，所有权重的更新也都相同，这样会导致隐藏层神经元没有区分性．这种现象也称为对称权重现象．为了打破这个平衡，比较好的方式是对每个参数都随机初始化（`Random Initialization`），使得不同神经元之间的区分性更好．
-- 固定值初始化：对于一些特殊的参数，我们可以根据经验用一个特殊的固定值来进行初始化．比如偏置（`Bias`）通常用0 来初始化，但是有时可以设置某些经验值以提高优化效率．对于使用`ReLU` 的神经元，有时也可以将偏置设为0.01，使得`ReLU` 神经元在训练初期更容易激活，从而获得一定的梯度来进行误差反向传播．
+- 随机初始化：在线性模型的训练（比如感知机和`Logistic` 回归）中，我们一般将参数全部初始化为0．但是这在神经网络的训练中会存在一些问题．因为如果参数都为0，在第一遍前向计算时，所有的隐藏层神经元的激活值都相同；在反向传播时，所有权重的更新也都相同，这样会导致隐藏层神经元没有区分性．这种现象也称为**对称权重现象**．为了打破这个平衡，比较好的方式是对每个参数都**随机初始化（`Random Initialization`）**，使得不同神经元之间的区分性更好．
+- 固定值初始化：对于一些特殊的参数，我们可以根据经验用一个特殊的固定值来进行初始化．比如偏置（`Bias`）通常用0来初始化，但是有时可以设置某些经验值以提高优化效率．对于使用`ReLU` 的神经元，有时也可以将偏置设为0.01，使得`ReLU` 神经元在训练初期更容易激活，从而获得一定的梯度来进行误差反向传播．
 
 ---
 # 参数初始化
 
-- 虽然预训练初始化通常具有更好的收敛性和泛化性，但是灵活性不够，不能在目标任务上任意地调整网络结构．
+虽然预训练初始化通常具有更好的收敛性和泛化性，但是灵活性不够，不能在目标任务上任意地调整网络结构．
 
-- 因此，好的随机初始化方法对训练神经网络模型来说依然十分重要．这里我们介绍三类常用的随机初始化方法：
-    - 基于固定方差的参数初始化
-    - 基于方差缩放的参数初始化
-    - 正交初始化方法．
+因此，好的随机初始化方法对训练神经网络模型来说依然十分重要．这里我们介绍三类常用的随机初始化方法：
+  - 基于固定方差的参数初始化
+  - 基于方差缩放的参数初始化
+  - 正交初始化方法．
 
 ---
 # 参数初始化
@@ -488,6 +487,24 @@ def d_softmax(x):
 
 - 高斯分布初始化：使用一个高斯分布$N(0,\sigma^2)$对每个参数进行随机初始化．
 - 均匀分布初始化：在一个给定的区间$[-r, r]$内采用均匀分布来初始化参数．假设随机变量x在区间$[a, b]$内均匀分布，则其方差为$var(x)=\frac{(b-a)^2}{12}$. 因此，若使用区间为$[-r, r]$的均分分布来采样，并满足$var(x)=\sigma^2$时，则𝑟的取值为$r=\sqrt{3\sigma^2}$
+
+---
+# 参数初始化
+## 1. 基于固定方差的参数初始化
+```python
+def uniform_init(m, limit=0.1):
+    if isinstance(m, nn.Linear):
+        init.uniform_(m.weight, -limit, limit)
+        if m.bias is not None:
+            init.uniform_(m.bias, -limit, limit)
+
+def normal_init(m, mean=0.0, std=0.05):
+    if isinstance(m, nn.Linear):
+        init.normal_(m.weight, mean, std)
+        if m.bias is not None:
+            init.normal_(m.bias, mean, std)
+
+```
 
 
 ---
@@ -500,6 +517,75 @@ def d_softmax(x):
 | Xavier | tanh | $r=\sqrt{\frac{6}{M_{l-1}+M_l}}$ | $\sigma^2=\frac{2}{M_{l-1}+M_l}$ |
 | He | reLu | $r=\sqrt{\frac{6}{M_{l-1}}}$ | $\sigma^2=\frac{2}{M_{l-1}}$ |
 
+---
+# 参数初始化
+## 2. 基于方差缩放的参数初始化
+```python
+def xavier_uniform_init(m):
+    if isinstance(m, nn.Linear):
+        init.xavier_uniform_(m.weight)
+        if m.bias is not None:
+            init.zeros_(m.bias)
+
+def xavier_normal_init(m):
+    if isinstance(m, nn.Linear):
+        init.xavier_normal_(m.weight)
+        if m.bias is not None:
+            init.zeros_(m.bias)
+
+```
+
+---
+# 参数初始化
+## 2. 基于方差缩放的参数初始化
+```python
+def he_uniform_init(m):
+    if isinstance(m, nn.Linear):
+        init.kaiming_uniform_(m.weight, nonlinearity='relu')
+        if m.bias is not None:
+            init.zeros_(m.bias)
+
+def he_normal_init(m):
+    if isinstance(m, nn.Linear):
+        init.kaiming_normal_(m.weight, nonlinearity='relu')
+        if m.bias is not None:
+            init.zeros_(m.bias)
+```
+
+
+---
+# 参数初始化
+## 3. 正交初始化
+正交初始化是一种权重初始化策略，常用于深度学习中的各种网络结构，特别是在循环神经网络（RNN）中非常受欢迎。正交初始化的目的是使得权重矩阵 $W$ 中的行向量或列向量都是正交的，即 $W^T W = I$或$W W^T = I$，其中 $I$是单位矩阵。这样的特性有几个关键优点：
+1. **保持特征独立**：正交矩阵的这种特性帮助网络每层输出的特征保持独立，减少了特征间的冗余，提高了学习效率。
+2. **缓解梯度问题**：在循环神经网络中，由于权重矩阵在每个时间步都参与计算，正交性能有效防止梯度在反向传播中的消失或爆炸，这是因为正交矩阵的特征值为1，这保持了梯度流动的稳定性。
+3. **稳定的激活分布**：由于正交矩阵的乘积仍是正交的，这帮助网络在前向传播中保持激活分布的稳定性，从而有助于网络的快速和稳定训练。
+
+---
+# 参数初始化
+## 3. 正交初始化
+正交初始化特别适用于那些激活函数的输出可以广泛分布且不易饱和的网络层，如ReLU激活函数配合的层。其初始化步骤通常如下：
+1. **生成随机矩阵**：首先生成一个形状为 $(d_{\text{in}}, d_{\text{out}})$的随机矩阵，通常元素来自标准正态分布。
+2. **应用SVD**：对这个随机矩阵应用奇异值分解（SVD），得到 $U$, $\Sigma$, $V^T$。
+3. **构造正交矩阵**：
+   - 如果 $d_{\text{in}} < d_{\text{out}}$，使用 $U$作为权重矩阵，因为 $U$的列是正交的。
+   - 如果 $d_{\text{in}} \geq d_{\text{out}}$，使用 $V$（来自 $V^T$的转置）作为权重矩阵，因为 $V$的行是正交的。
+
+---
+# 参数初始化
+## 3. 正交初始化
+
+在PyTorch中，可以直接使用`torch.nn.init.orthogonal_`来应用正交初始化：
+
+```python
+# 定义一个线性层
+linear = nn.Linear(20, 30)
+# 应用正交初始化
+torch.nn.init.orthogonal_(linear.weight)
+# 打印权重查看效果
+print("Weights after orthogonal initialization:")
+print(linear.weight)
+```
 
 ---
 # 正则化
@@ -581,6 +667,44 @@ x \text{  测试时}\\
 $$
 
 ---
+# 正则化
+## 4. 丢弃法`Dropout`
+```python
+# Dropout概率设置为0.5
+dropout = nn.Dropout(p=0.1)
+# 假设有一层的输出
+layer_output = torch.randn(4, 5)  # 随机生成一些数据
+# 应用Dropout
+output_during_training = dropout(layer_output)
+# 输出查看
+print("Output with Dropout during training:")
+print(output_during_training)
+```
+
+---
+# 正则化
+## 4. 丢弃法`Dropout`
+```python
+class MyModel(nn.Module):
+    def __init__(self):
+        super(MyModel, self).__init__()
+        self.layer1 = nn.Linear(784, 256)
+        self.dropout1 = nn.Dropout(0.5)
+        self.layer2 = nn.Linear(256, 10)
+    
+    def forward(self, x):
+        x = torch.relu(self.layer1(x))
+        x = self.dropout1(x)  # 在第一层后应用Dropout
+        x = self.layer2(x)
+        return x
+
+# 注意：模型训练时会应用Dropout，测试时需关闭Dropout
+model = MyModel()
+model.train()  # 确保是训练模式
+```
+
+
+---
 # 融合权重衰减和dropout的前馈神经网络实现
 ```python
 class FNN2:
@@ -625,7 +749,6 @@ class FNN2:
                     y = func(mask_z)
             else:
                 y = mask_z
-            
             self.z_list.append(mask_z)
             self.a_list.append(y)
         return y.double()
