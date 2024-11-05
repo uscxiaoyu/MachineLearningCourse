@@ -95,6 +95,8 @@ headingDivider: 0
 - 2021年，OpenAI发布了GPT-3。
 - 2022年，DeepMind发布了AlphaFold2。同年，OpenAI发布了ChatGPT(GPT-3.5)，极速获取了大量用户。
 - 2023年，OpenAI发布了GPT-4，性能更加强大，进一步拓展着人工智能应用前沿。
+- 2024年，OpenAI发布了GPT-4o和GPT-o1 Preview，加入了规划和推理功能。
+- 2024年10月，Hopfield和Hinton因神经网络方面的基础性发现和发明获得诺贝尔物理学奖，而发明AlphaFold的Hassabis和Jumper则获得诺贝尔化学奖。
 
 
 ---
