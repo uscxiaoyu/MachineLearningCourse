@@ -14,18 +14,20 @@ headingDivider: 0
 
 - 线性回归模型
 - 线性回归模型的参数学习
-- `torch`实现
+- `pytorch`实现
     - 梯度下降
     - 小批量梯度下降
     - `torch.nn.Module`
 
 ---
 # 0.概述
-- 回归模型的输出是一个连续值，在现实中很常见，如预测房屋价格、气温、销售额等连续值的问题。**线性回归模型**适用于解决回归问题。
-
-- 与回归模型不同，分类模型的输出是一个离散值。图像分类、垃圾邮件识别、疾病检测等问题都属于分类问题。**`logit`和`softmax`回归**则适用于解决分类问题。
-
-- 线性回归、`logit`回归和`softmax`回归可视为单层神经网络，它们涉及的概念和技术同样适用于大多数的深度学习模型。因此，我们首先以线性回归为例，介绍大多数深度学习模型的基本要素和表示方法。
+- 回归模型的输出是一个连续值，在现实中很常见，如预测房屋价格、气温、销售额等连续值的问题
+- **线性回归模型**适用于解决回归问题
+- 与回归模型不同，分类模型的输出是一个离散值
+  - 图像分类、垃圾邮件识别、疾病检测等问题都属于分类问题
+  - **`logit`和`softmax`回归**则适用于解决分类问题
+- 线性回归、`logit`回归和`softmax`回归可视为单层神经网络，它们涉及的概念和技术同样适用于大多数的深度学习模型
+- 因此，我们首先以线性回归为例，介绍大多数深度学习模型的基本要素和表示方法
 
 ---
 # 0.概述
@@ -36,11 +38,11 @@ headingDivider: 0
 - 一般写成用向量形式
     $$f(\mathbf{x_i})=\mathbf{x_i\omega}+b,$$
     其中$\mathbf{\omega}=(\omega_1;\omega_2;...;\omega_d)$. 
-- $\mathbf{\omega}$和$b$学得后，模型就确定了.
+- $\mathbf{\omega}$和$b$学得后，模型就确定了
 
 ---
 # 1.线性回归模型
-`Galton(1886)`发现父亲身高与儿子身高存在着某种给定的关系：子辈的平均身高是其父辈平均身高以及他们所处族群平均身高的加权平均和。这种**回归**现象称为：均值回归或者平庸回归（`reversion to the mean/reversion to mediocrity`）。因此，哪怕单看一组父亲和孩子的身高，两个人的身高可能差异很大，但是从整个人群上来看，父亲和孩子的身高分布应该是很相近的。
+`Galton(1886)`发现父亲身高与儿子身高存在着某种给定的关系：子辈的平均身高是其父辈平均身高以及他们所处族群平均身高的加权平均和。这种**回归**现象称为：均值回归或者平庸回归（`reversion to the mean/reversion to mediocrity`）。因此，哪怕单看一组父亲和孩子的身高，两个人的身高可能差异很大，但是从整个人群上来看，父亲和孩子的身高分布应该是很相近的
 
 此外，这里所说的线性回归是指$f(x)$相对于系数$\omega, b$为线性，变量$X_j$ 可以是
 - 数值变量
@@ -96,7 +98,7 @@ $$
 \cfrac{\partial E_{\hat{w}}}{\partial \hat{w}}=2\mathbf{X}^T(\mathbf{X}\hat{w}-\mathbf{y}).
 $$
 
-- 令上式为`0`可得$\mathbf{\hat\omega}$最优封闭形式解。
+- 令上式为`0`可得$\mathbf{\hat\omega}$最优封闭形式解
 
 ---
 ## 学习准则2: 最大化(对数)似然率
@@ -122,7 +124,7 @@ $$
 f(\mathrm{\hat x_i})=\mathbf{\hat x_i^T(X^T X)^{-1}X^T y}.
 $$
 
-- 然而，现实任务中$\mathbf{X^T X}$往往不是满秩矩阵。此外，随着训练集规模的增大，计算量呈现大幅增长。因此，往往求助于数值优化算法（如梯度下降）迭代求解。
+- 然而，**现实任务中$\mathbf{X^T X}$往往不是满秩矩阵**。此外，随着训练集规模的增大，计算量呈现大幅增长。因此，往往求助于数值优化算法（如梯度下降）迭代求解
 
 ---
 
@@ -136,16 +138,16 @@ $$
 
 ---
 ## 训练方法
-- 在求数值解的优化算法中，小批量随机梯度下降(`mini-batch stochastic gradient descent`)在深度学习中被广泛使用。
+- 在求数值解的优化算法中，小批量随机梯度下降(`mini-batch stochastic gradient descent`)在深度学习中被广泛使用
 
 - 算法过程如下:
-    - 先选取一组模型参数的初始值，如随机选取;
-    - 接下来对参数进行多次迭代，使每次迭代都可能降低损失函数的值。
+    - 先选取一组模型参数的初始值，如随机选取
+    - 接下来对参数进行多次迭代，使每次迭代都可能降低损失函数的值
 
     > **批量梯度下降法**和**随机梯度下降**可以看作是**小批量随机梯度下降法**的特殊形式，批量梯度下降法使用所有的样本更新参数，随机梯度下降使用1个样本更新参数，小批量随机梯度下降法选择1个小样本更新参数
 
 ---
-## 线性模型
+## 模型实现
 
 ```python
 def linearModel(X: torch.tensor, w: torch.tensor)-> torch.tensor:
@@ -159,19 +161,20 @@ def linearModel(X: torch.tensor, w: torch.tensor)-> torch.tensor:
 ---
 ## 损失函数
 ```python
-def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.tensor:
+def meanSquaredLoss(X, y, w):
     """
     X: N*a, N为样本数量，a为（增广）特征维度
     y: N, 标签
     w: a*1
     """
     hat_y = X @ w.reshape(-1, 1)
-    sLoss = torch.dot(hat_y.reshape(-1) - y.reshape(-1), hat_y.reshape(-1) - y.reshape(-1))
+    sLoss = torch.dot(hat_y.reshape(-1) - y.reshape(-1), 
+        hat_y.reshape(-1) - y.reshape(-1))
     return sLoss / y.numel()
 ```
 
 ---
-## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
+## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚
 - `L1: Lasso regression`
     $$
     \min \frac{1}{2}(y-X\hat{w})(y-X\hat{w})^T+\frac{1}{2}\lambda \sum_{i=1}^d|w_i|
@@ -185,7 +188,7 @@ def meanSquaredLoss(X: torch.tensor, y: torch.tensor, w: torch.tensor) -> torch.
     $$
 
 ---
-## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚。
+## 正则化：在实际回归任务中，为了防止过拟合，以上损失函数也可以加入对参数的惩罚
 
 - `L2: Ridge regression`
     $$
@@ -215,13 +218,15 @@ def meanSquaredLoss_Penalty(X, y, w, delta=0.5, l=0):
     l: 取0, 1, 2, 分别表示不惩罚，l1惩罚和l2惩罚
     """
     hat_y = X @ w.reshape(-1, 1)
-    sLoss = torch.dot(hat_y.reshape(-1) - y.reshape(-1), hat_y.reshape(-1) - y.reshape(-1))
+    sLoss = torch.dot(hat_y.reshape(-1) - y.reshape(-1), 
+        hat_y.reshape(-1) - y.reshape(-1))
     if l == 0:
         penalty = 0
     elif l == 1:
         penalty = torch.sum(torch.abs(w.reshape(-1)[:-1]))
     else:
-        penalty = torch.sqrt(torch.dot(w.reshape(-1)[:-1], w.reshape(-1)[:-1]))
+        penalty = torch.sqrt(torch.dot(w.reshape(-1)[:-1], 
+                        w.reshape(-1)[:-1]))
     return (sLoss + delta*penalty) / y.numel()
 ```
 
@@ -239,6 +244,7 @@ def grad_mse_w(X, y, w):
 
 ---
 ## 基于梯度下降实现多元线性回归
+
 **线性回归的梯度下降参数学习算法**
 - 输入: 特征`X`, 标签`y`, 样本数量`m`, 训练回合数`epochs`, 学习率$\eta$
 - 输出: 最优参数$w^*$，训练模型$f(x, w^*)$
@@ -251,7 +257,8 @@ def grad_mse_w(X, y, w):
 
 ---
 ## 基于梯度下降实现多元线性回归
-- 自己写导数
+
+- 自建求导函数
 
     ```python
     def lm_grad_desc(features, labels, epochs=100, learn_rate=0.05):
@@ -267,7 +274,8 @@ def grad_mse_w(X, y, w):
 
 ---
 ## 基于梯度下降实现多元线性回归
-- 基于`torch`自动求导机制
+
+- 基于`torch`自动求导
     ```python
     def lm_gd_auto(features, labels, epochs=100, learn_rate=0.05):
         w = torch.randn(size=(features.shape[1], 1), requires_grad=True)  # 参数初始化
@@ -288,13 +296,14 @@ def grad_mse_w(X, y, w):
 
 ---
 # 练习1
-- 请基于`torch`实现多项式回归的参数学习与预测。
+- 请基于`torch`实现多项式回归的参数学习与预测
 $$
 y=\alpha + \sum_{j=1}^{p}X^jw_j
 $$
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
+
 **线性回归的小批量随机梯度下降学习方法**
 - 输入: 特征`X`, 标签`y`, 批次样本量`batch_size`, 训练回合总数`epochs`, 学习率$\eta$
 - 输出: 最优参数$w^*$，训练模型$f(x, w^*)$
@@ -304,7 +313,8 @@ $$
 
 
 ---
-## 基于小批量随机随机梯度下降实现多元线性回归
+## 基于小批量随机随机梯度下降实现多元线性回归求解
+
 **线性回归的小批量随机梯度下降学习方法**
 
 - 算法过程:
@@ -315,7 +325,8 @@ $$
     - 令$w^*=w, f(x, w^*)=x^Tw^*$, 算法结束
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
+
 **线性回归的小批量随机梯度下降学习方法**
 
 注意
@@ -323,7 +334,7 @@ $$
 > - **批量梯度下降法**和**随机梯度下降**可以看作是**小批量随机梯度下降法**的特殊形式，批量梯度下降法使用所有的样本更新参数，随机梯度下降使用1个样本更新参数，小批量随机梯度下降法选择1个小样本更新参数
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
 ```python
 # 随机选取batch_size数量的数据，生成器
 def sampleData(batch_size, features, labels):
@@ -340,7 +351,7 @@ def sampleData(batch_size, features, labels):
 ```
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
 - 方法1: 自己定义导数
 ```python
 def lm_mb_grad_desc(features, labels, batch_size=20, 
@@ -359,14 +370,14 @@ def lm_mb_grad_desc(features, labels, batch_size=20,
 > 当`batch_size=1`时，即为随机梯度下降
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
 - 方法2: 利用`torch`的自动求导机制
-    - **自动微分（Automatic Differentiation，AD）** 是一种可以对一个（程序）函数进行计算导数的方法。符号微分的处理对象是数学表达式，而自动微分的处理对象是一个函数或一段程序。
+    - **自动微分（Automatic Differentiation，AD）** 是一种可以对一个（程序）函数进行计算导数的方法。符号微分的处理对象是数学表达式，而自动微分的处理对象是一个函数或一段程序
 
-    - 自动微分的基本原理是所有的数值计算可以分解为一些基本操作，包含`+, −, ×, / `和一些初等函数`exp, log, sin, cos`等，然后利用链式法则来自动计算一个复合函数的梯度。
+    - 自动微分的基本原理是所有的数值计算可以分解为一些基本操作，包含`+, −, ×, / `和一些初等函数`exp, log, sin, cos`等，然后利用链式法则来自动计算一个复合函数的梯度
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
 方法2: 利用`torch`的自动求导机制
 ![bg right:60% fit](./pictures/4.3.jpg)
 
@@ -377,7 +388,7 @@ $$
 
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
 - 方法2: 利用`torch`的自动求导机制
 ```python
 def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
@@ -397,7 +408,7 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
 ```
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
 - 方法2: 利用`torch`的自动求导机制
 ```python
 
@@ -414,13 +425,15 @@ def lm_mbgd_auto(features, labels, batch_size=20, epochs=100, learn_rate=0.05):
 ```
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
+
 - 方法3: 基于`torch.nn.Module`实现
-![bg right:60% fit](./pictures/4.2.svg)
+![bg right:50% fit](./pictures/4.2.svg)
 
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
+
 - 方法3: 基于`torch.nn.Module`实现
 
 ```python
@@ -434,7 +447,8 @@ data_iter = DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
 ```
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
+
 - 方法3: 基于`torch.nn.Module`实现
 
 ```python
@@ -449,7 +463,8 @@ class LinearRegressionModel(torch.nn.Module):
 ```
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
+
 - 方法3: 基于`torch.nn.Module`实现单层神经网络模型(线性回归)
 ```python
 # 初始化实例，2维特征，1维输出
@@ -466,7 +481,8 @@ trainer = torch.optim.SGD(net.parameters(), lr=0.05)  # 随机梯度下降算法
 ```
 
 ---
-## 基于小批量随机梯度下降实现多元线性回归
+## 基于小批量随机梯度下降实现多元线性回归求解
+
 - 方法3: 基于`torch.nn.Module`实现
 
 ```python
@@ -487,7 +503,7 @@ for epoch in range(num_epochs):
 ---
 # 练习2
 
-- 请基于`torch`实现`Ridge regression`的参数学习。
+- 请基于`torch`实现`Ridge regression`的参数学习
 
 ---
 ## 参考资料

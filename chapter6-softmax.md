@@ -6,7 +6,7 @@ headingDivider: 0
 # header: '**`Softmax`模型**'
 ---
 <!-- fit -->
-# `Softmax`模型
+# `Softmax`回归模型
 
 ---
 # 主要内容
@@ -20,7 +20,7 @@ headingDivider: 0
 
 ---
 # 1. `Softmax`回归模型
-- Softmax回归（Softmax Regression），也称为多项（Multinomial）或多类（Multi-Class）的Logit回归，是Logit回归在多分类问题上的推广。
+- Softmax回归（Softmax Regression），也称为多项（Multinomial）或多类（Multi-Class）的Logit回归，是Logit回归在多分类问题上的推广
 
 - 对于多类问题，类别标签$y \in {1, 2,..., C}$ 可以有C个取值．给定一个测试样本$x$，Softmax 回归预测的属于类别c的条件概率为
     $$
@@ -30,11 +30,11 @@ headingDivider: 0
     \end{aligned}
     $$
 
-    其中$\mathbf{w_i}$是第i类的权重向量。
+    其中$\mathbf{w_i}$是第i类的权重向量
 
 ---
 # 1. `Softmax`回归模型
-![bg right:50% fit](./pictures/5.2-sofmax.svg)
+![bg right:40% fit](./pictures/5.2-sofmax.svg)
 
 ---
 # 1. `Softmax`回归模型
@@ -74,7 +74,7 @@ def hat_y(X, W):
 ---
 # 1. `Softmax`回归模型
 
-- 与`Logistic`回归的关系。当类别数$C=2$时，`softmax`回归的决策函数为
+- 与`Logit`回归的关系。当类别数$C=2$时，`Softmax`回归的决策函数为
     $$
     \begin{aligned}
     \hat{y}&=\text{arg}\max_{i\in\{1,2\}}p(y=c|\mathbf{x})\\
@@ -90,7 +90,7 @@ def hat_y(X, W):
 
 - 信息量是对于单个事件来说的，但是实际情况一件事有很多种发生的可能，比如掷骰子有可能出现6种情况，明天的天气可能晴、多云或者下雨等等。因此，我们需要评估事件对应的所有可能性。
 
-- 熵（entropy）是表示随机变量不确定的度量，是对表征所有可能发生的事件所需信息量的期望。
+- 熵（entropy）是表示随机变量不确定的度量，是对表征所有可能发生的事件所需信息量的期望
 
 - 设$X$是一个取有限个值的随机变量，其概率分布为
 $$
@@ -106,7 +106,7 @@ $$
 $$
 H(p)=-\sum_{i=1}^n p_i \log p_i
 $$
-熵越大，不确定越大。
+熵越大，不确定越大
 
 ---
 
@@ -127,13 +127,13 @@ entropy(P1), entropy(P2)
 
 --- 
 
-- 条件熵(`conditional entropy`): 表示在已知随机变量$X$的条件下随机变量$Y$的不确定性。
+- 条件熵(`conditional entropy`): 表示在已知随机变量$X$的条件下随机变量$Y$的不确定性
 
     $$
     H(Y|X)=\sum_{i=1}^n P(X=x_i)H(Y|X=x_i)
     $$
 
-其中，$H(Y|X=x_i)=-\sum_j P(Y=y_j|X=x_i)\log P(Y=y_j|X=x_i)$，表示在$X=x_i$时Y的不确定程度；$p(Y=y_j|X=x_i) = \frac{p(X=x_i, Y=y_j)}{p(X=x_i)}$。
+其中，$H(Y|X=x_i)=-\sum_j P(Y=y_j|X=x_i)\log P(Y=y_j|X=x_i)$，表示在$X=x_i$时Y的不确定程度；$p(Y=y_j|X=x_i) = \frac{p(X=x_i, Y=y_j)}{p(X=x_i)}$
 > 如果X与Y无关，则有$H(Y|X)=H(Y)$；如果Y由X唯一决定，则有$H(Y|X)=0$
 
 ---
@@ -157,7 +157,7 @@ $$
 \text{KL(p||q)}=-\sum_x p(x)\log\frac{q(x)}{p(x)}
 $$
 
-- 由`Jesen`不等式可证明，$\text{KL(p||q)}\geq 0$，当且仅当对于所有$x$有$p(x)=q(x)$时，取等号。
+- 由`Jesen`不等式可证明，$\text{KL(p||q)}\geq 0$，当且仅当对于所有$x$有$p(x)=q(x)$时，取等号
 
 - 此外，需注意，$\text{KL(p||q)}\neq \text{KL(q||p)}$
 
@@ -197,11 +197,11 @@ $$
 
 - 有$\text{crossEntropy(p(x), q(x))} = \text{KL(p||q)} + H\left(p(x)\right)$
 
-- 由于$H\left(p(x)\right)$为定值，针对q最小化交叉熵等价于最小化`KL(p||q)`，即使理论分布与抽样分布之间的差异最小。
+- 由于$H\left(p(x)\right)$为定值，针对q最小化交叉熵等价于最小化`KL(p||q)`，即使理论分布与抽样分布之间的差异最小
 
 ---
 # 3. `Softmax`回归模型的参数学习
-- 给定$N$个训练样本，Softmax回归使用交叉熵损失函数学习最优的参数矩阵$W$。为了方便起见，使用C维的`one-hot`向量表示类别标签，对于类别`i`，其向量表示为
+- 给定$N$个训练样本，Softmax回归使用交叉熵损失函数学习最优的参数矩阵$W$。为了方便起见，使用$C$维的`one-hot`向量表示类别标签，对于类别$i$，其向量表示为
     $$
     y = [I(i=1), I(i=2), ..., I(i=C)]
     $$
@@ -210,10 +210,10 @@ $$
     $$
     \begin{aligned}
     R(\mathbf{W})&=-\frac{1}{N}\sum_{n=1}^N\sum_{i=1}^{C}y_c^{(n)}\log \hat{y}_c^{(n)}\\
-    &=-\frac{1}{N}\sum_{n=1}^N(\mathbf{y^{(n)}})^T\log \hat{y}_c^{(n)}
+    &=-\frac{1}{N}\sum_{n=1}^N(\mathbf{y^{(n)}})^T\log \mathbf{\hat{y}^{(n)}}
     \end{aligned}
     $$
-    其中，$\hat{y}_c^{(n)}=\text{softmax}\mathbf(W^Tx^{(n)})$为样本$x^{(n)}$在每个类别的后验概率。
+    其中，$\hat{y}_c^{(n)}=\text{softmax}\mathbf(W^Tx^{(n)})$为样本$x^{(n)}$在每个类别的后验概率
 
 ---
 
@@ -259,7 +259,7 @@ def grad_crosEnt_W(X, y, W):
     $$
     W_{t+1}:=W_t+\eta\left(\frac{1}{N}\sum_{n=1}^N\mathbf{x^{(n)}(y^{(n)}-\hat{y}^{(n)})}^T\right) 
     $$
-    - 直到满足指定迭代次数，令$w^*=w^T$。
+    - 直到满足指定迭代次数，令$w^*=w^T$
                                                                                                                                                 
 ---
 - 方法1: 梯度下降-人工求导
